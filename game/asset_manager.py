@@ -28,19 +28,20 @@ class AssetManager:
 
         return img
 
-    def get_sprite_colors(cls, img: Surface) -> tuple:
+    def get_sprite_colors(cls, img: Surface) -> list:
         """
         Loop through a surface and grab the colors its made of
+        sort from lightest(n) to darkest(0)
         """
         colors: list = []
         for row in surfarray.array3d(img):
             for pixel in row:
-                rgb: tuple = (int(pixel[0]), int(pixel[1]), int(pixel[2]))
-                if rgb not in [(255, 255, 255), (0, 0, 0)] + colors:
+                rgb: list = [int(pixel[0]), int(pixel[1]), int(pixel[2]), 255]
+                if rgb not in [[255, 255, 255, 255], [0, 0, 0, 255]] + colors:
                     colors.append(rgb)
-        return tuple(colors)
+        colors.sort(key=sum)
+        return colors
 
-    # decorater, alter functions , make a function run different
     @classmethod
     def get_sprite_images(cls) -> dict:
         """

@@ -10,7 +10,7 @@ from ...asset_manager import AssetManager
 class LevelOne(ScreenBase):
     def __init__(self, w_h: tuple) -> None:
         self.width, self.height = w_h
-        self.image = pygame.Surface(w_h, SRCALPHA)
+        self.image = pygame.Surface(w_h, flags=SRCALPHA)
         self.rect = self.image.get_rect()
 
         self.background = Background((self.width, self.height))
@@ -26,31 +26,33 @@ class LevelOne(ScreenBase):
             self.height - self.player.rect.height,
         )
 
+        self.sprites = pygame.sprite.Group([self.enemy, self.player])
+
+        self.game_over = pygame.USEREVENT + 3
+
         pygame.mouse.set_cursor(pygame.cursors.broken_x)
         pygame.time.set_timer(self.enemy.basic_attack, 1000)
         pygame.time.set_timer(self.enemy.special_attack, 2500)
 
     def __check_collisions(self):
         """check for collision between sprites"""
-        # runs method and assigns result to variable
-        if p_lasers := pygame.sprite.spritecollide(
-            self.enemy, self.player.lasers, True
-        ):
-            for laser in p_lasers:
-                self.enemy.take_damage(laser.damage)
+        # temp way to handle enemy collisions
+        if self.enemy.health > 0:
+            if p_lasers := pygame.sprite.spritecollide(
+                self.enemy, self.player.lasers, True
+            ):
+                for laser in p_lasers:
+                    self.enemy.take_damage(laser.damage)
 
         if e_lasers := pygame.sprite.spritecollide(
             self.player, self.enemy.lasers, True
         ):
             for laser in e_lasers:
                 self.player.take_damage(laser.damage)
-            # if players health = zero return to main menu
-            if self.player.health == 0:
-                # disable timer
+            if self.player.health <= 0:
                 pygame.time.set_timer(self.enemy.basic_attack, 0)
-                # how to change the screen
-                self.change_screen = True
-                self.new_screen = "main_menu"
+                pygame.time.set_timer(self.enemy.special_attack, 0)
+                pygame.time.set_timer(self.game_over, 1500, True)
 
     def __player_keydown_controller(self, event):
         """respond to player inputs"""
@@ -69,30 +71,47 @@ class LevelOne(ScreenBase):
         elif event.key == pygame.K_d:
             self.player.moving_right = False
 
-    def __update_game_objects(self):
+    def __update(self):
         """updates and displays game objects"""
         self.background.update()
-        self.player.update()
         self.__check_collisions()
-        if self.enemy.health > 0:
-            self.enemy.update(play_x=self.player.rect.centerx)
 
-    def __draw_game_objects(self):
+        for sprite in self.sprites:
+            if sprite.health > 0:
+                sprite.update(play_x=self.player.rect.centerx)
+            elif sprite.dying:
+                sprite.update_particles()
+
+    def __draw(self):
         self.image.blit(self.background.image, self.background.rect)
-        self.image.blit(self.player.image, self.player.rect)
-        if self.enemy.health > 0:
-            self.image.blit(self.enemy.image, self.enemy.rect)
-            for laser in self.enemy.lasers:
-                if laser.rect.y > self.height:
-                    self.enemy.lasers.remove(laser)
+        for sprite in self.sprites:
+            if sprite.health > 0:
+                self.image.blit(sprite.image, sprite.rect)
+                for laser in sprite.lasers:
+                    if 0 - laser.rect.height < laser.rect.y < self.height:
+                        self.image.blit(laser.image, laser.rect)
+                    else:
+                        laser.kill()
 
-                self.image.blit(laser.image, laser.rect)
-
-        for laser in self.player.lasers:
-            if laser.rect.bottom < 0:
-                self.player.lasers.remove(laser)
-
-            self.image.blit(laser.image, laser.rect)
+            elif sprite.dying:
+                # switch to true if any particle still has an alpha > 0
+                visible: bool = False
+                for particle in sprite.color_particles:
+                    if particle.alpha > 0:
+                        self.image.lock()
+                        for position in particle.positions:
+                            pygame.draw.circle(
+                                self.image, particle.color, position, particle.radius
+                            )
+                        self.image.unlock()
+                        # a particles alpha is greater than zero
+                        # and we have not switched the bool yet
+                        if not visible:
+                            visible = True
+                # if all of the particles have an alpha
+                # less than zero remove sprite from all groups
+                if not visible:
+                    sprite.kill()
 
     def check_events(self, event):
         """Check level events"""
@@ -109,8 +128,11 @@ class LevelOne(ScreenBase):
             self.enemy.create_laser()
         if event.type == self.enemy.special_attack and self.enemy.health > 0:
             self.enemy.create_special_laser()
+        if event.type == self.game_over:
+            self.change_screen = True
+            self.new_screen = "main_menu"
 
     def update(self):
         """Update level elements and draw to level's main surface"""
-        self.__update_game_objects()
-        self.__draw_game_objects()
+        self.__update()
+        self.__draw()

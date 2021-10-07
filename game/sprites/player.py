@@ -7,7 +7,8 @@ from .ship import Ship
 class Player(Ship):
     def __init__(self, surface: Surface) -> None:
         super().__init__(surface)
-        self.movement_speed = 10.0
+        self.base_speed: float = 10.0
+        self.movement_speed: float = 10.0
         self.health: int = 6
 
     def __move_left(self):
@@ -40,7 +41,7 @@ class Player(Ship):
     def create_laser(self):
         super().create_laser(-1, (self.rect.top - Laser.w_h[1]))
 
-    def update(self):
+    def update(self, **kwargs):
         if self.moving_left:
             self.__move_left()
         elif self.moving_right:
