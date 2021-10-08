@@ -1,6 +1,11 @@
-from abc import ABCMeta
+from .background import Background
+from ..settings import screen_dims
 
-# Everything a screen needs to operate in the game loop
+from abc import ABCMeta
+from pygame import Surface
+from pygame.constants import SRCALPHA
+
+
 class ScreenBase(metaclass=ABCMeta):
     """
     Store all of the code every screen in the game will need access to
@@ -12,8 +17,12 @@ class ScreenBase(metaclass=ABCMeta):
     # screen's key will be the file name of the screen without ".py"
     new_screen: str = "main_menu"
 
-    # check that the required methods have been added to the subclass
-    # more information at "https://realpython.com/python-interface/#formal-interfaces"
+    background = Background(screen_dims)
+    width, height = screen_dims
+
+    image = Surface(screen_dims, flags=SRCALPHA)
+    rect = image.get_rect()
+
     @classmethod
     def __subclasshook__(cls, subclass):
         return (

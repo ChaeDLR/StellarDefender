@@ -16,16 +16,17 @@ class SpaceGame:
         self.screens = {
             "main_menu": game.MainMenu,
             "level_one": game.LevelOne,
+            "game_over": game.GameOver,
         }
 
-        self.active_screen = self.screens["main_menu"]((self.width, self.height))
+        self.active_screen = self.screens["main_menu"]()
         self.clock = pygame.time.Clock()
 
     def __get_active_screen(self):
         """
         Get the new screen and return it
         """
-        return self.screens[self.active_screen.new_screen]((self.width, self.height))
+        return self.screens[self.active_screen.new_screen]()
 
     def __check_events(self):
         """Check pygame events"""
@@ -40,7 +41,6 @@ class SpaceGame:
         """runs the main loop of the game"""
         while 1:
             self.clock.tick(60)
-            # change the screen if the screen managers bool is changed to true anywhere in the program
             if self.active_screen.change_screen:
                 self.active_screen = self.__get_active_screen()
                 self.change_screen = False
@@ -51,7 +51,6 @@ class SpaceGame:
             pygame.display.update()
 
 
-# to change class variavle
 if __name__ == "__main__":
     spaceGame = SpaceGame()
     spaceGame.run_game()

@@ -12,29 +12,24 @@ class Background:
         """
         w_h: tuple -> (screen_width, screen_height)
         """
-        # create all of the background's basic variables
-        # set size of the background
         Background.screen_dims: tuple = w_h
-        # set color to black
         self.color: tuple = (1, 1, 1)
-        # create the image and pass SRCALPHA so that the image will display (R, G, B, A) and not only (R, G, B)
         self.image = Surface(self.screen_dims, flags=SRCALPHA)
         self.image.fill(self.color)
         self.rect = self.image.get_rect()
-        # Iterator to hold all of the background's generated stars
-        self.starbatch: list = []
-        # create the stars and populate the starbatch list
-        self.__create_starbatch()
+        self.starbatch: list = self.__create_starbatch()
 
-    def __create_starbatch(self):
+    def __create_starbatch(self) -> list:
         """
         Create a batch of stars
         circles of the color yellow with random variables
         that will control the behavior
         """
+        stars: list = []
         for _ in range(0, 10):
             new_star = _Star()
-            self.starbatch.append(new_star)
+            stars.append(new_star)
+        return stars
 
     def update(self):
         """

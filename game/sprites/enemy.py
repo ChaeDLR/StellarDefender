@@ -9,10 +9,8 @@ class Enemy(Ship):
 
         self.health: int = 4
         self.alpha: int = 255
-        # rate the alpha changes
         self.alpha_inc: int = -50
 
-        # CUSTOM EVENTS
         self.basic_attack = USEREVENT + 1
         self.special_attack = USEREVENT + 2
 

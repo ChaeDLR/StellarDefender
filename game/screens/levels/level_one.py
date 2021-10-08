@@ -1,20 +1,12 @@
 import pygame
-from pygame.constants import SRCALPHA
 
 from ...sprites import Enemy, Player
-from ..background import Background
 from ..screen_base import ScreenBase
 from ...asset_manager import AssetManager
 
 
 class LevelOne(ScreenBase):
-    def __init__(self, w_h: tuple) -> None:
-        self.width, self.height = w_h
-        self.image = pygame.Surface(w_h, flags=SRCALPHA)
-        self.rect = self.image.get_rect()
-
-        self.background = Background((self.width, self.height))
-
+    def __init__(self) -> None:
         self.sprite_images = AssetManager.get_sprite_images()
         self.enemy = Enemy(self.sprite_images["enemy_ship"])
         self.enemy.set_position(self.width / 2 - self.enemy.rect.width / 2, 0.0)
@@ -73,8 +65,8 @@ class LevelOne(ScreenBase):
 
     def __update(self):
         """updates and displays game objects"""
-        self.background.update()
         self.__check_collisions()
+        self.background.update()
 
         for sprite in self.sprites:
             if sprite.health > 0:
@@ -129,8 +121,9 @@ class LevelOne(ScreenBase):
         if event.type == self.enemy.special_attack and self.enemy.health > 0:
             self.enemy.create_special_laser()
         if event.type == self.game_over:
+            pygame.mouse.set_cursor(pygame.cursors.arrow)
             self.change_screen = True
-            self.new_screen = "main_menu"
+            self.new_screen = "game_over"
 
     def update(self):
         """Update level elements and draw to level's main surface"""
