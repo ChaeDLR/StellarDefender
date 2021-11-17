@@ -14,7 +14,7 @@ class Ship(sprite.Sprite):
 
         self.image = surface["image"]
         self.rect = self.image.get_rect()
-        self.x, self.y = float(self.rect.x), float(self.rect.y)
+        self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
         self.color_particles: list = self.__generate_particles(surface["colors"])
         self.moving_left, self.moving_right = False, False
         self.base_speed: float = 5.5
@@ -104,7 +104,7 @@ class Ship(sprite.Sprite):
     def set_position(self, x: float, y: float):
         """set player positions"""
         self.x, self.y = x, y
-        self.rect.x, self.rect.y = int(self.x), int(self.y)
+        self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
 
     def update_particles(self):
         for particle in self.color_particles:

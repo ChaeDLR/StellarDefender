@@ -1,9 +1,14 @@
-from pygame import Surface, USEREVENT
+from pygame import Surface, event, time
 from .laser import SLaser
 from .ship import Ship
 
 
 class Enemy(Ship):
+    """basic enemy class"""
+
+    BASIC_ATK = event.custom_type()
+    SPECIAL_ATK = event.custom_type()
+
     def __init__(self, surface: Surface) -> None:
         super().__init__(surface)
 
@@ -11,20 +16,27 @@ class Enemy(Ship):
         self.alpha: int = 255
         self.alpha_inc: int = -50
 
-        self.basic_attack = USEREVENT + 1
-        self.special_attack = USEREVENT + 2
+        self.basic_atk_event: event.Event = event.Event(
+            self.BASIC_ATK, {"sprite": self}
+        )
+        self.special_atk_event: event.Event = event.Event(
+            self.SPECIAL_ATK, {"sprite": self}
+        )
 
-    def __track_player(self, player_x: float):
+    def __track(self, start: int, dest: int, speed: int = 40) -> float:
         """
-        enemy tracks player position
-        play_x: float -> player.rect.centerx
+        calculate a gradual movement from
+        start ----> dest
+        increase speed variable to track slower
+        decrease to track faster
         """
-        if not player_x - 1 <= self.rect.centerx <= player_x + 1:
-            # formula to move x towards player x
-            inc_x = (player_x - self.rect.x) / 40
+        return (dest - start) / speed
 
-            self.x += inc_x
-            self.rect.x = int(self.x)
+    def cancel_timers(self):
+        """cancel all of the enemy's timers"""
+        time.set_timer(self.basic_atk_event, 0)
+        time.set_timer(self.special_atk_event, 0)
+        event.clear(eventtype=[self.basic_atk_event.type, self.special_atk_event.type])
 
     def create_laser(self):
         super().create_laser(1, self.rect.bottom)
@@ -37,10 +49,16 @@ class Enemy(Ship):
         s_laser.set_position(self.rect.midbottom[0], self.rect.midbottom[1])
         self.lasers.add(s_laser)
 
-    def update(self, play_x: float):
+    def update(self, x: int, y: int):
         """
         Update enemy sprite
         """
-        self.__track_player(play_x)
+        if x:
+            self.x += self.__track(self.rect.centerx, x)
+            self.rect.centerx = int(self.x)
+        if y:
+            self.y += self.__track(self.rect.centery, y)
+            self.rect.centery = int(self.y)
+
         self.lasers.update()
         super().update()

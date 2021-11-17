@@ -68,6 +68,7 @@ class AssetManager:
                     "colors": cls.get_sprite_colors(cls, img),
                 }
 
+            AssetManager.sprite_images = new_images
             return new_images
 
 

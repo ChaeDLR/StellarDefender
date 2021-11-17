@@ -36,7 +36,7 @@ class MainMenu(MenuBase):
         """check for mouseup events"""
         if self.start_button.check_button(mouse_pos, True):
             self.change_screen = True
-            self.new_screen = "level_one"
+            self.new_screen = "level"
 
         elif self.quit_button.check_button(mouse_pos, True):
             event.clear()
