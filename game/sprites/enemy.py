@@ -6,15 +6,15 @@ from .ship import Ship
 class Enemy(Ship):
     """basic enemy class"""
 
-    BASIC_ATK = event.custom_type()
-    SPECIAL_ATK = event.custom_type()
-
     def __init__(self, surface: Surface) -> None:
         super().__init__(surface)
 
         self.health: int = 4
         self.alpha: int = 255
         self.alpha_inc: int = -50
+
+        self.BASIC_ATK = event.custom_type()
+        self.SPECIAL_ATK = event.custom_type()
 
         self.basic_atk_event: event.Event = event.Event(
             self.BASIC_ATK, {"sprite": self}

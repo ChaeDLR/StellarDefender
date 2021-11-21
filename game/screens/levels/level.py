@@ -7,6 +7,8 @@ from ...asset_manager import AssetManager
 
 
 class Level(ScreenBase):
+    GAME_OVER = pygame.event.custom_type()
+
     def __init__(self) -> None:
         self.state = LevelOne()
         self.paused: bool = False
@@ -19,8 +21,6 @@ class Level(ScreenBase):
         )
 
         self.sprites = pygame.sprite.Group(self.player)
-
-        self.game_over = pygame.USEREVENT + 3
 
         pygame.mouse.set_cursor(pygame.cursors.broken_x)
 
@@ -39,7 +39,7 @@ class Level(ScreenBase):
                     self.player.take_damage(laser.damage)
                     if self.player.health <= 0:
                         enemy.cancel_timers()
-                        pygame.time.set_timer(self.game_over, 1500, True)
+                        pygame.time.set_timer(self.GAME_OVER, 1500, True)
 
     def __player_keydown_controller(self, event):
         """respond to player inputs"""
@@ -103,10 +103,9 @@ class Level(ScreenBase):
                 if not visible:
                     sprite.kill()
 
-    def check_events(self, event):
+    def check_events(self, event: pygame.event.Event):
         """Check level events"""
         if event.type == pygame.KEYDOWN:
-
             if event.key == pygame.K_ESCAPE:
                 self.paused = False if self.paused else True
             if self.paused:
@@ -119,12 +118,10 @@ class Level(ScreenBase):
         if event.type == pygame.MOUSEBUTTONDOWN:
             self.player.create_laser()
 
-        if event.type == Enemy.BASIC_ATK:
-            event.sprite.create_laser()
-        elif event.type == Enemy.SPECIAL_ATK:
-            event.sprite.create_special_laser()
+        if hasattr(event, "sprite"):
+            self.state.check_events(event)
 
-        if event.type == self.game_over:
+        if event.type == self.GAME_OVER:
             pygame.mouse.set_cursor(pygame.cursors.arrow)
             self.change_screen = True
             self.new_screen = "game_over"
