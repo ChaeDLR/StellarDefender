@@ -32,6 +32,11 @@ class Enemy(Ship):
         """
         return (dest - start) / speed
 
+    def take_damage(self, value):
+        super().take_damage(value)
+        if self.dying:
+            self.cancel_timers()
+
     def cancel_timers(self):
         """cancel all of the enemy's timers"""
         time.set_timer(self.basic_atk_event, 0)

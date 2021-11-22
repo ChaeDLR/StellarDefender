@@ -44,7 +44,7 @@ class Ship(sprite.Sprite):
             )
         return particles
 
-    def __animate(self):
+    def __animate(self) -> None:
         """
         animate sprite when hit
         """
@@ -59,7 +59,7 @@ class Ship(sprite.Sprite):
                 self.__recover()
             self.image.set_alpha(self.alpha)
 
-    def __recover(self):
+    def __recover(self) -> None:
         """
         reset after being damaged
         """
@@ -68,7 +68,7 @@ class Ship(sprite.Sprite):
         self.alpha = 255
         self.movement_speed = self.base_speed
 
-    def create_laser(self, direction: int, pos_y: int):
+    def create_laser(self, direction: int, pos_y: int) -> None:
         """
         create lasers and add it to the group
         """
@@ -86,7 +86,7 @@ class Ship(sprite.Sprite):
 
         self.lasers.add(laser)
 
-    def take_damage(self, value):
+    def take_damage(self, value) -> None:
         """
         Reduce player health and set bool
         """
@@ -101,16 +101,16 @@ class Ship(sprite.Sprite):
                 self.damaged = True
                 self.movement_speed /= 2
 
-    def set_position(self, x: float, y: float):
+    def set_position(self, x: float, y: float) -> None:
         """set player positions"""
         self.x, self.y = x, y
         self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
 
-    def update_particles(self):
+    def update_particles(self) -> None:
         for particle in self.color_particles:
             particle.update()
 
-    def update(self):
+    def update(self) -> None:
         """check for player updates"""
         if self.damaged:
             self.__animate()

@@ -87,15 +87,18 @@ class LevelOne:
         Update all of the sprites in self.enemies
         """
         for position in self.enemies:
-            if self.group.has(self.enemies[position]["sprite"]):
-                self.enemies[position]["sprite"].update(
-                    player_x + self.enemies[position]["off-set-x"]
-                    if self.enemies[position]["off-set-x"]
-                    else player_x,
-                    self.enemies[position]["off-set-y"]
-                    if self.enemies[position]["sprite"].rect.centery
-                    < self.enemies[position]["off-set-y"]
-                    else None,
-                )
+            if self.group.has(enemy := self.enemies[position]["sprite"]):
+                if enemy.health > 0:
+                    self.enemies[position]["sprite"].update(
+                        player_x + self.enemies[position]["off-set-x"]
+                        if self.enemies[position]["off-set-x"]
+                        else player_x,
+                        self.enemies[position]["off-set-y"]
+                        if self.enemies[position]["sprite"].rect.centery
+                        < self.enemies[position]["off-set-y"]
+                        else None,
+                    )
+                elif enemy.dying:
+                    enemy.update_particles()
             else:
                 self.__spawn_enemy(position)
