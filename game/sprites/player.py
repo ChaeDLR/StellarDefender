@@ -41,6 +41,10 @@ class Player(Ship):
     def create_laser(self):
         super().create_laser(-1, (self.rect.top - Laser.w_h[1]))
 
+    def update_particles(self) -> None:
+        super().update_particles()
+        self.lasers.update()
+
     def update(self, **kwargs):
         if self.moving_left:
             self.__move_left()

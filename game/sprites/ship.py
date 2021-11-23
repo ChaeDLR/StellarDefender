@@ -1,4 +1,5 @@
 from pygame import Vector2, sprite
+from typing import Tuple
 from ..settings import screen_dims
 from .laser import Laser
 
@@ -13,14 +14,15 @@ class Ship(sprite.Sprite):
         self.screen_dims = screen_dims
 
         self.image = surface["image"]
+        self.colors = surface["colors"]
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
-        self.color_particles: list = self.__generate_particles(surface["colors"])
         self.moving_left, self.moving_right = False, False
         self.base_speed: float = 5.5
         self.movement_speed: float = 5.5
         self.alpha: int = 255
         self.alpha_switch: int = 1
+        self.image.set_alpha(self.alpha)
         self.animation_counter: int = 1
         self.side_switch: bool = True
         self.damaged: bool = False
@@ -28,18 +30,19 @@ class Ship(sprite.Sprite):
 
         self.lasers = sprite.Group()
 
-    def __generate_particles(self, colors: list) -> list:
+    def __generate_particles(self) -> list:
         """
         Take a list of colors and generate a list of particles
         """
         particles: list = []
-        for n, color in enumerate(colors):
+        for n, color in enumerate(self.colors):
             particles.append(
                 _Particle(
                     color=color,
                     radius=(self.rect.w / 4) - n,
-                    velocity=0.5 * n,
+                    velocity=0.8 * (n + 1),
                     offset=(n, n),
+                    center=self.rect.center,
                 )
             )
         return particles
@@ -95,8 +98,7 @@ class Ship(sprite.Sprite):
             self.health -= value
             if self.health <= 0:
                 self.dying = True
-                for particle in self.color_particles:
-                    particle.set_center(self.rect.center)
+                self.color_particles = self.__generate_particles()
             else:
                 self.damaged = True
                 self.movement_speed /= 2
@@ -137,7 +139,14 @@ class _Particle:
         (1, 1),
     )
 
-    def __init__(self, color: tuple, radius: int, velocity: float, offset: tuple):
+    def __init__(
+        self,
+        color: tuple,
+        radius: int,
+        velocity: float,
+        offset: tuple,
+        center: Tuple[int, int],
+    ):
 
         self.color: tuple = color
         self.radius: int = radius
@@ -145,20 +154,15 @@ class _Particle:
         self.offset: tuple = offset
 
         self.alpha: float = 255.0
+        Vector2()
 
-        self.positions: list = []
+        self.positions: list = [Vector2((0, 0)) for _ in self.directions]
 
-    def set_center(self, center: tuple):
-        """
-        Set the point where the particles should disperse from
-        """
-        for dir in self.directions:
-            self.positions.append(
-                Vector2(
-                    center[0] + (self.offset[0] * dir[0]),
-                    center[1] + (self.offset[1] * dir[1]),
-                )
-            )
+        self.alpha: float = 255.0
+        self.color[3] = int(self.alpha)
+        for i, position in enumerate(self.positions):
+            position.x = int(center[0] + (self.offset[0] * self.directions[i][0]))
+            position.y = int(center[1] + (self.offset[1] * self.directions[i][1]))
 
     def update(self):
         """
@@ -167,9 +171,13 @@ class _Particle:
         Lower the radius
         """
         for i in range(len(self.positions)):
-            self.positions[i].x += self.velocity * self.directions[i][0]
-            self.positions[i].y += self.velocity * self.directions[i][1]
+            self.positions[i].x += int(self.velocity * self.directions[i][0])
+            self.positions[i].y += int(self.velocity * self.directions[i][1])
 
-        self.alpha -= self.velocity
+        if self.alpha > 0.0:
+            self.alpha -= self.velocity
+        elif self.alpha < 0.0:
+            self.alpha = 0.0
+
         self.color[3] = int(self.alpha)
         self.radius -= 0.2

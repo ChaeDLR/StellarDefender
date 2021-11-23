@@ -33,7 +33,7 @@ class SpaceGame:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                exit(0)
             else:
                 self.active_screen.check_events(event)
 

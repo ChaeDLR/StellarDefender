@@ -37,7 +37,8 @@ class LevelOne:
                             enemy_imgstr, (img_width, img_height), "RGBA"
                         ),
                         "colors": self.enemy_img["colors"],
-                    }
+                    },
+                    attack_speed=750,
                 ),
                 "off-set-x": int(img_width * 2.5),
                 "off-set-y": int((img_height / 2) + 1),
@@ -49,15 +50,13 @@ class LevelOne:
                             enemy_imgstr, (img_width, img_height), "RGBA"
                         ),
                         "colors": self.enemy_img["colors"],
-                    }
+                    },
+                    attack_speed=750,
                 ),
                 "off-set-x": int((img_width * 2.5) * -1),
                 "off-set-y": int((img_height / 2) + 1),
             },
         }
-
-        self.BASIC_ATK: int = 1000
-        self.SPECIAL_ATK: int = 2500
 
         for position in self.enemies:
             self.__spawn_enemy(position)
@@ -68,18 +67,21 @@ class LevelOne:
         position in the formation
         """
         enemy: Enemy = self.enemies[position]["sprite"]
+        enemy.image.set_alpha(255)
+        enemy.health = 4
+        enemy.dying = False
         enemy.set_position((settings.width / 2), -50)
         enemy.cancel_timers()
-        time.set_timer(enemy.basic_atk_event, self.BASIC_ATK)
-        time.set_timer(enemy.special_atk_event, self.SPECIAL_ATK)
+        time.set_timer(enemy.basicatk_event, enemy.basicatk_event.speed)
+        time.set_timer(enemy.specialatk_event, enemy.specialatk_event.speed)
         self.group.add(enemy)
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
         for enemy in self.group.sprites():
-            if event.type == enemy.BASIC_ATK:
+            if event.type == enemy.basicatk_event.type:
                 event.sprite.create_laser()
-            elif event.type == enemy.SPECIAL_ATK:
+            elif event.type == enemy.specialatk_event.type:
                 event.sprite.create_special_laser()
 
     def update(self, player_x: int):

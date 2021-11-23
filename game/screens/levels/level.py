@@ -13,6 +13,7 @@ class Level(ScreenBase):
         self.state = LevelOne()
         self.paused: bool = False
 
+        AssetManager.sprite_images["player_ship"]["image"].set_alpha(255)
         self.player = Player(AssetManager.sprite_images["player_ship"])
 
         self.player.set_position(
@@ -75,29 +76,29 @@ class Level(ScreenBase):
 
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
 
+            for laser in sprite.lasers:
+                if 0 - laser.rect.height < laser.rect.y < self.height:
+                    self.image.blit(laser.image, laser.rect)
+                else:
+                    laser.kill()
+
             if sprite.health > 0:
                 self.image.blit(sprite.image, sprite.rect)
-                for laser in sprite.lasers:
-                    if 0 - laser.rect.height < laser.rect.y < self.height:
-                        self.image.blit(laser.image, laser.rect)
-                    else:
-                        laser.kill()
-
             elif sprite.dying:
                 # switch to true if any particle still has an alpha > 0
                 visible: bool = False
                 for particle in sprite.color_particles:
-                    if particle.alpha > 0:
+                    if particle.alpha > 20.0:
+                        visible = True
                         self.image.lock()
                         for position in particle.positions:
                             pygame.draw.circle(
-                                self.image, particle.color, position, particle.radius
+                                self.image,
+                                particle.color,
+                                position,
+                                particle.radius,
                             )
                         self.image.unlock()
-                        # a particles alpha is greater than zero
-                        # and we have not switched the bool yet
-                        if not visible:
-                            visible = True
                 # if all of the particles have an alpha
                 # less than zero remove sprite from all groups
                 if not visible:
