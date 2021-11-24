@@ -117,7 +117,8 @@ class Level(ScreenBase):
             self.__player_keyup_controller(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self.player.create_laser()
+            if self.player.health > 0:
+                self.player.create_laser()
 
         if hasattr(event, "sprite"):
             self.state.check_events(event)
