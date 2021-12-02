@@ -4,7 +4,6 @@ from sys import exit
 
 
 class SpaceGame:
-
     width, height = game.screen_dims
 
     def __init__(self):
@@ -12,12 +11,13 @@ class SpaceGame:
         self.main_screen = pygame.display.set_mode(
             (self.width, self.height), flags=pygame.DOUBLEBUF
         )
-
         self.screens = {
             "main_menu": game.MainMenu,
-            "level_one": game.LevelOne,
+            "level": game.Level,
             "game_over": game.GameOver,
         }
+
+        game.AssetManager.get_sprite_images()
 
         self.active_screen = self.screens["main_menu"]()
         self.clock = pygame.time.Clock()
@@ -33,7 +33,7 @@ class SpaceGame:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                exit()
+                exit(0)
             else:
                 self.active_screen.check_events(event)
 

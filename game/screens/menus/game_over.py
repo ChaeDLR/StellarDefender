@@ -39,7 +39,7 @@ class GameOver(MenuBase):
             self.new_screen = "main_menu"
         elif self.retry_button.check_button(mouse_pos, True):
             self.change_screen = True
-            self.new_screen = "level_one"
+            self.new_screen = "level"
         elif self.quit_button.check_button(mouse_pos, True):
             event.clear()
             event.post(event.Event(QUIT))

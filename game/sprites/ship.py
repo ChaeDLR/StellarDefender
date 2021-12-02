@@ -1,4 +1,5 @@
-from pygame import Vector2, sprite
+from pygame import Surface, Vector2, sprite
+from typing import Tuple
 from ..settings import screen_dims
 from .laser import Laser
 
@@ -12,15 +13,16 @@ class Ship(sprite.Sprite):
         super().__init__()
         self.screen_dims = screen_dims
 
-        self.image = surface["image"]
+        self.image: Surface = surface["image"]
+        self.colors: tuple = tuple(surface["colors"])
         self.rect = self.image.get_rect()
-        self.x, self.y = float(self.rect.x), float(self.rect.y)
-        self.color_particles: list = self.__generate_particles(surface["colors"])
+        self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
         self.moving_left, self.moving_right = False, False
         self.base_speed: float = 5.5
         self.movement_speed: float = 5.5
         self.alpha: int = 255
         self.alpha_switch: int = 1
+        self.image.set_alpha(self.alpha)
         self.animation_counter: int = 1
         self.side_switch: bool = True
         self.damaged: bool = False
@@ -28,23 +30,24 @@ class Ship(sprite.Sprite):
 
         self.lasers = sprite.Group()
 
-    def __generate_particles(self, colors: list) -> list:
+    def __generate_particles(self) -> list:
         """
         Take a list of colors and generate a list of particles
         """
         particles: list = []
-        for n, color in enumerate(colors):
+        for n, color in enumerate(self.colors):
             particles.append(
                 _Particle(
                     color=color,
                     radius=(self.rect.w / 4) - n,
-                    velocity=0.5 * n,
+                    velocity=0.8 * (n + 1),
                     offset=(n, n),
+                    center=self.rect.center,
                 )
             )
         return particles
 
-    def __animate(self):
+    def __animate(self) -> None:
         """
         animate sprite when hit
         """
@@ -59,7 +62,7 @@ class Ship(sprite.Sprite):
                 self.__recover()
             self.image.set_alpha(self.alpha)
 
-    def __recover(self):
+    def __recover(self) -> None:
         """
         reset after being damaged
         """
@@ -68,7 +71,7 @@ class Ship(sprite.Sprite):
         self.alpha = 255
         self.movement_speed = self.base_speed
 
-    def create_laser(self, direction: int, pos_y: int):
+    def create_laser(self, direction: int, pos_y: int) -> None:
         """
         create lasers and add it to the group
         """
@@ -86,7 +89,7 @@ class Ship(sprite.Sprite):
 
         self.lasers.add(laser)
 
-    def take_damage(self, value):
+    def take_damage(self, value) -> None:
         """
         Reduce player health and set bool
         """
@@ -95,22 +98,21 @@ class Ship(sprite.Sprite):
             self.health -= value
             if self.health <= 0:
                 self.dying = True
-                for particle in self.color_particles:
-                    particle.set_center(self.rect.center)
+                self.color_particles = self.__generate_particles()
             else:
                 self.damaged = True
                 self.movement_speed /= 2
 
-    def set_position(self, x: float, y: float):
+    def set_position(self, x: float, y: float) -> None:
         """set player positions"""
         self.x, self.y = x, y
-        self.rect.x, self.rect.y = int(self.x), int(self.y)
+        self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
 
-    def update_particles(self):
+    def update_particles(self) -> None:
         for particle in self.color_particles:
             particle.update()
 
-    def update(self):
+    def update(self) -> None:
         """check for player updates"""
         if self.damaged:
             self.__animate()
@@ -137,28 +139,25 @@ class _Particle:
         (1, 1),
     )
 
-    def __init__(self, color: tuple, radius: int, velocity: float, offset: tuple):
+    def __init__(
+        self,
+        color: tuple,
+        radius: int,
+        velocity: float,
+        offset: tuple,
+        center: Tuple[int, int],
+    ):
 
-        self.color: tuple = color
+        self.color: list = list(color)
         self.radius: int = radius
         self.velocity: float = velocity
         self.offset: tuple = offset
-
         self.alpha: float = 255.0
 
-        self.positions: list = []
-
-    def set_center(self, center: tuple):
-        """
-        Set the point where the particles should disperse from
-        """
-        for dir in self.directions:
-            self.positions.append(
-                Vector2(
-                    center[0] + (self.offset[0] * dir[0]),
-                    center[1] + (self.offset[1] * dir[1]),
-                )
-            )
+        self.positions: list = [Vector2((0, 0)) for _ in self.directions]
+        for i, position in enumerate(self.positions):
+            position.x = int(center[0] + (self.offset[0] * self.directions[i][0]))
+            position.y = int(center[1] + (self.offset[1] * self.directions[i][1]))
 
     def update(self):
         """
@@ -167,9 +166,13 @@ class _Particle:
         Lower the radius
         """
         for i in range(len(self.positions)):
-            self.positions[i].x += self.velocity * self.directions[i][0]
-            self.positions[i].y += self.velocity * self.directions[i][1]
+            self.positions[i].x += int(self.velocity * self.directions[i][0])
+            self.positions[i].y += int(self.velocity * self.directions[i][1])
 
-        self.alpha -= self.velocity
+        if 15.0 < self.alpha <= 255.0:
+            self.alpha -= self.velocity
+        else:
+            self.alpha = 0.0
+
         self.color[3] = int(self.alpha)
         self.radius -= 0.2

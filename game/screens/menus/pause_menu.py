@@ -1,7 +1,7 @@
 from pygame import SRCALPHA
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
-from game_files import ScreenBase
-from .button import Button
+from ..screen_base import ScreenBase
+from .components.button import Button
 
 
 class PauseMenu(ScreenBase):
