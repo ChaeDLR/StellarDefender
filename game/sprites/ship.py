@@ -1,4 +1,4 @@
-from pygame import Vector2, sprite
+from pygame import Surface, Vector2, sprite
 from typing import Tuple
 from ..settings import screen_dims
 from .laser import Laser
@@ -13,8 +13,8 @@ class Ship(sprite.Sprite):
         super().__init__()
         self.screen_dims = screen_dims
 
-        self.image = surface["image"]
-        self.colors = surface["colors"]
+        self.image: Surface = surface["image"]
+        self.colors: tuple = tuple(surface["colors"])
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
         self.moving_left, self.moving_right = False, False
@@ -148,18 +148,13 @@ class _Particle:
         center: Tuple[int, int],
     ):
 
-        self.color: tuple = color
+        self.color: list = list(color)
         self.radius: int = radius
         self.velocity: float = velocity
         self.offset: tuple = offset
-
         self.alpha: float = 255.0
-        Vector2()
 
         self.positions: list = [Vector2((0, 0)) for _ in self.directions]
-
-        self.alpha: float = 255.0
-        self.color[3] = int(self.alpha)
         for i, position in enumerate(self.positions):
             position.x = int(center[0] + (self.offset[0] * self.directions[i][0]))
             position.y = int(center[1] + (self.offset[1] * self.directions[i][1]))
@@ -174,9 +169,9 @@ class _Particle:
             self.positions[i].x += int(self.velocity * self.directions[i][0])
             self.positions[i].y += int(self.velocity * self.directions[i][1])
 
-        if self.alpha > 0.0:
+        if 15.0 < self.alpha <= 255.0:
             self.alpha -= self.velocity
-        elif self.alpha < 0.0:
+        else:
             self.alpha = 0.0
 
         self.color[3] = int(self.alpha)

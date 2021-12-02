@@ -1,7 +1,7 @@
 import pygame
 
 from .states import LevelOne
-from ...sprites import Enemy, Player
+from ...sprites import Player
 from ..screen_base import ScreenBase
 from ...asset_manager import AssetManager
 
@@ -44,20 +44,28 @@ class Level(ScreenBase):
 
     def __player_keydown_controller(self, event):
         """respond to player inputs"""
+        if hasattr(event, "button"):
+            if self.player.health > 0 and event.button == 1:
+                self.player.firing = True
 
-        if event.key == pygame.K_a:
-            self.player.moving_left = True
+        if hasattr(event, "key"):
+            if event.key == pygame.K_a:
+                self.player.moving_left = True
 
-        elif event.key == pygame.K_d:
-            self.player.moving_right = True
+            if event.key == pygame.K_d:
+                self.player.moving_right = True
 
     def __player_keyup_controller(self, event):
+        if hasattr(event, "button"):
+            if event.button == 1:
+                self.player.firing = False
 
-        if event.key == pygame.K_a:
-            self.player.moving_left = False
+        if hasattr(event, "key"):
+            if event.key == pygame.K_a:
+                self.player.moving_left = False
 
-        elif event.key == pygame.K_d:
-            self.player.moving_right = False
+            if event.key == pygame.K_d:
+                self.player.moving_right = False
 
     def __update(self):
         """updates and displays game objects"""
@@ -117,8 +125,9 @@ class Level(ScreenBase):
             self.__player_keyup_controller(event)
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.player.health > 0:
-                self.player.create_laser()
+            self.__player_keydown_controller(event)
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.__player_keyup_controller(event)
 
         if hasattr(event, "sprite"):
             self.state.check_events(event)
