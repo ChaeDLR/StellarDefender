@@ -9,7 +9,7 @@ class SpaceGame:
     def __init__(self):
         pygame.init()
         self.main_screen = pygame.display.set_mode(
-            (self.width, self.height), flags=pygame.DOUBLEBUF
+            (self.width, self.height), flags=pygame.SCALED, vsync=1
         )
         self.screens = {
             "main_menu": game.MainMenu,
