@@ -1,4 +1,5 @@
 # Stellar-D
+|LGTMGradePython|
  Pygame space shooter
 
 ### Demo
