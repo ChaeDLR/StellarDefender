@@ -14,11 +14,10 @@ class AssetManager:
         file_name: string -> file location
         resize tuple -> (width height)
         """
-
         img = image.load(os.path.join(cls.asset_directory, file_name)).convert()
 
         if colorkey:
-            # get color of top left picel
+            # get color of top left pixel
             colorkey = img.get_at((0, 0))
             # assign the file image
             img.set_colorkey(colorkey)
@@ -50,7 +49,6 @@ class AssetManager:
         if cls.sprite_images:
             return cls.sprite_images
         else:
-            # hash  table google hash tables
             new_images: dict = {}
             file_names: list = os.listdir(cls.asset_directory)
 
@@ -58,8 +56,7 @@ class AssetManager:
                 colorkey: bool = True
                 img_size: tuple = (64, 64)
                 file_name_altered: str = file_str[:-4]
-                # assign file image(surface object)
-                # filename - extension
+
                 img: Surface = cls.__get_image(
                     cls, file_name=file_str, resize=img_size, colorkey=colorkey
                 )
