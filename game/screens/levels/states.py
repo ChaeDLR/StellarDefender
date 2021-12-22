@@ -1,9 +1,7 @@
-from pygame import Surface, event, sprite, time, image
+from pygame import event, sprite, time
 from game import settings
-from copy import deepcopy
 
 from ...sprites import Enemy
-from ...asset_manager import AssetManager
 
 
 class LevelOne:
@@ -13,45 +11,25 @@ class LevelOne:
 
     def __init__(self):
         self.group: sprite.Group = sprite.Group()
-        self.enemy_img: Surface = AssetManager.sprite_images["enemy_ship"]
-        img_width, img_height = self.enemy_img["image"].get_size()
-        enemy_imgstr: str = image.tostring(self.enemy_img["image"], "RGBA")
+
+        img_width, img_height = Enemy.size
 
         self.enemies: dict = {
             "lead": {
-                "sprite": Enemy(
-                    {
-                        "image": image.fromstring(
-                            enemy_imgstr, (img_width, img_height), "RGBA"
-                        ),
-                        "colors": self.enemy_img["colors"],
-                    }
-                ),
+                "sprite": Enemy(),
                 "off-set-x": None,
                 "off-set-y": int(img_height * 2.5),
             },
             "left_flank": {
                 "sprite": Enemy(
-                    {
-                        "image": image.fromstring(
-                            enemy_imgstr, (img_width, img_height), "RGBA"
-                        ),
-                        "colors": self.enemy_img["colors"],
-                    },
-                    attack_speed=1250,
+                    1250,
                 ),
                 "off-set-x": int(img_width * 2.5),
                 "off-set-y": int((img_height / 2) + 1),
             },
             "right_flank": {
                 "sprite": Enemy(
-                    {
-                        "image": image.fromstring(
-                            enemy_imgstr, (img_width, img_height), "RGBA"
-                        ),
-                        "colors": self.enemy_img["colors"],
-                    },
-                    attack_speed=1500,
+                    1500,
                 ),
                 "off-set-x": int((img_width * 2.5) * -1),
                 "off-set-y": int((img_height / 2) + 1),

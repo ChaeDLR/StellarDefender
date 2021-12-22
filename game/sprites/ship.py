@@ -1,4 +1,4 @@
-from pygame import Surface, Vector2, sprite
+from pygame import Surface, Vector2, sprite, surfarray
 from typing import Tuple
 from ..settings import screen_dims
 from .laser import Laser
@@ -9,12 +9,11 @@ class Ship(sprite.Sprite):
     A base class for all of the ship sprites
     """
 
-    def __init__(self, surface: dict):
+    def __init__(self, img: Surface):
         super().__init__()
         self.screen_dims = screen_dims
 
-        self.image: Surface = surface["image"]
-        self.colors: tuple = tuple(surface["colors"])
+        self.image: Surface = img.copy()
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
         self.moving_left, self.moving_right = False, False
@@ -29,6 +28,20 @@ class Ship(sprite.Sprite):
         self.dying: bool = False
 
         self.lasers = sprite.Group()
+
+    def _get_sprite_colors(self, img: Surface) -> tuple:
+        """
+        Loop through a surface and grab the colors its made of
+        sort from lightest(n) to darkest(0)
+        """
+        colors: list = []
+        for row in surfarray.array3d(img):
+            for pixel in row:
+                rgb: list = [int(pixel[0]), int(pixel[1]), int(pixel[2]), 255]
+                if rgb not in [[255, 255, 255, 255], [0, 0, 0, 255]] + colors:
+                    colors.append(rgb)
+        colors.sort(key=sum)
+        return tuple(colors)
 
     def __generate_particles(self) -> list:
         """

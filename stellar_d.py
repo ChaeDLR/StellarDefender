@@ -11,13 +11,13 @@ class SpaceGame:
         self.main_screen = pygame.display.set_mode(
             (self.width, self.height), flags=pygame.SCALED, vsync=1
         )
+        game.Assets.init()
+
         self.screens = {
             "main_menu": game.MainMenu,
             "level": game.Level,
             "game_over": game.GameOver,
         }
-
-        game.AssetManager.get_sprite_images()
 
         self.active_screen = self.screens["main_menu"]()
         self.clock = pygame.time.Clock()

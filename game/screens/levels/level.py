@@ -3,7 +3,6 @@ import pygame
 from .states import LevelOne
 from ...sprites import Player
 from ..screen_base import ScreenBase
-from ...asset_manager import AssetManager
 
 
 class Level(ScreenBase):
@@ -13,8 +12,7 @@ class Level(ScreenBase):
         self.state = LevelOne()
         self.paused: bool = False
 
-        AssetManager.sprite_images["player_ship"]["image"].set_alpha(255)
-        self.player = Player(AssetManager.sprite_images["player_ship"])
+        self.player = Player()
 
         self.player.set_position(
             self.width / 2 - self.player.rect.width / 2,

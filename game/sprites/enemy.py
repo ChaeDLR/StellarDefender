@@ -1,4 +1,5 @@
-from pygame import Surface, event, time
+from pygame import event, time
+from game import Assets
 
 from .laser import SLaser
 from .ship import Ship
@@ -7,8 +8,11 @@ from .ship import Ship
 class Enemy(Ship):
     """basic enemy class"""
 
-    def __init__(self, surface: Surface, attack_speed: int = 1000) -> None:
-        super().__init__(surface)
+    colors: tuple = None
+    size: tuple = (64, 64)
+
+    def __init__(self, attack_speed: int = 1000) -> None:
+        super().__init__(Assets.get_image("enemy"))
 
         self.health: int = 4
         self.alpha: int = 255
@@ -28,6 +32,9 @@ class Enemy(Ship):
                 "speed": int(attack_speed * 2.25),
             },
         )
+
+        if not Enemy.colors:
+            Enemy.colors = self._get_sprite_colors(self.image)
 
     def __track(self, start: int, dest: int, speed: int = 40) -> float:
         """
