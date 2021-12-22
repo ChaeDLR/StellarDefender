@@ -1,6 +1,7 @@
 import os
 
 from pygame import Surface, image, transform, surfarray
+from copy import deepcopy
 
 
 class Assets:
@@ -9,32 +10,34 @@ class Assets:
     __sprite_images: dict = {}
 
     def __init__(self):
-        self.__load(self.__assets_directory)
+        self.__load(self.__assets_directory, self.__sprite_images)
 
     def __load(self, path: str, imgs_dict: dict) -> None:
         """Load __sprite_images: dict with all the images in the path arg directory"""
         img_size: tuple = (64, 64)
+        temp_imgs: list = []
         for file in os.listdir(path):
             if file[len(file) - 4 :] == ".png":
-                # animation types
-                str_parts = img[:-4].split("_")
-
                 img: Surface = self.__load_image(file_name=file, resize=img_size)
                 img.__setattr__("colors", self.__get_sprite_colors(img))
 
-                if imgs_dict:
-                    imgs_dict[str_parts[0]] = img
+                if file[:-4].isdigit():
+                    temp_imgs.append(img)
                 else:
-                    self.__sprite_images[str_parts[0]] = img
+                    # single .pngs with their key in the title
+                    str_parts = file[:-4].split("_")
+                    imgs_dict[str_parts[0]] = img
+                    print(f"\nKey = {str_parts[0]}\nValue = {img}\n")
             else:
+                imgs_dict[file] = {}
+                self.__load(
+                    os.path.abspath(os.path.join(path, file)),
+                    imgs_dict[file],
+                )
 
-                # for img in os.listdir(os.path.join(self.__assets_directory, file)):
-                #     print(f"Parts = {str_parts}")
-                # Grab key
-                key: str = file
-                # recall
-                print(os.path.abspath(os.path.join(path, file)))
-                # self.__load(os.path.abspath(os.path.join(path, file)))
+        if len(temp_imgs) > 0:
+            pathprts: list = path.split("\\")
+            imgs_dict[pathprts[len(pathprts) - 1]] = temp_imgs
 
     def __load_image(self, file_name: str, resize: tuple[int, int] = None):
         """
@@ -68,9 +71,11 @@ class Assets:
         colors.sort(key=sum)
         return colors
 
-    def get_image(cls, key: str) -> Surface or dict:
+    @classmethod
+    def get_image(cls, key: str | list) -> Surface or dict:
+        """Return img surface object or dict with all of the surface's pngs"""
         try:
-            return cls.__sprite_images[key]
+            return deepcopy(cls.__sprite_images[key])
         except KeyError as ex:
             raise ex.with_traceback()
 
