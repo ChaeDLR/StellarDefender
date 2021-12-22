@@ -1,5 +1,6 @@
 from pygame import event, time
-from game.asset_manager import Assets
+from game import Assets
+
 from .laser import SLaser
 from .ship import Ship
 
@@ -7,7 +8,8 @@ from .ship import Ship
 class Enemy(Ship):
     """basic enemy class"""
 
-    __size: tuple = (64, 64)
+    colors: tuple = None
+    size: tuple = (64, 64)
 
     def __init__(self, attack_speed: int = 1000) -> None:
         super().__init__(Assets.get_image("enemy"))
@@ -31,6 +33,9 @@ class Enemy(Ship):
             },
         )
 
+        if not Enemy.colors:
+            Enemy.colors = self._get_sprite_colors(self.image)
+
     def __track(self, start: int, dest: int, speed: int = 40) -> float:
         """
         calculate a gradual movement from
@@ -39,10 +44,6 @@ class Enemy(Ship):
         decrease to track faster
         """
         return (dest - start) / speed
-
-    @property.getter
-    def get_size(self):
-        return self.__size
 
     def take_damage(self, value):
         super().take_damage(value)

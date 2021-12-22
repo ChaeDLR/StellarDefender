@@ -11,7 +11,8 @@ class LevelOne:
 
     def __init__(self):
         self.group: sprite.Group = sprite.Group()
-        img_width, img_height = Enemy.get_size()
+
+        img_width, img_height = Enemy.size
 
         self.enemies: dict = {
             "lead": {

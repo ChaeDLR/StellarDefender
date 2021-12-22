@@ -1,11 +1,14 @@
 from game.sprites.laser import Laser
-from game.asset_manager import Assets
+from game import Assets
 from pygame import time
 
 from .ship import Ship
 
 
 class Player(Ship):
+
+    colors: tuple = None
+
     def __init__(self) -> None:
         super().__init__(Assets.get_image("player"))
         self.base_speed: float = 10.0
@@ -14,6 +17,9 @@ class Player(Ship):
         self.firing: bool = False
         self.__fire_cd: int = 250  # in milliseconds
         self.__prev_ticks: int = time.get_ticks()
+
+        if not Player.colors:
+            Player.colors = self._get_sprite_colors(self.image)
 
     def __move_left(self):
         """move the player to the left"""
