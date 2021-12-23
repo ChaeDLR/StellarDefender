@@ -32,18 +32,11 @@ class Enemy(Ship):
                 "speed": int(attack_speed * 2.25),
             },
         )
+        self.timers = self.basicatk_event
+        self.timers = self.specialatk_event
 
         if not Enemy.colors:
             Enemy.colors = self._get_sprite_colors(self.image)
-
-    def __track(self, start: int, dest: int, speed: int = 40) -> float:
-        """
-        calculate a gradual movement from
-        start ----> dest
-        increase speed variable to track slower
-        decrease to track faster
-        """
-        return (dest - start) / speed
 
     def take_damage(self, value):
         super().take_damage(value)
@@ -75,12 +68,11 @@ class Enemy(Ship):
         """
         Update enemy sprite
         """
-        if x:
-            self.x += self.__track(self.rect.centerx, x)
-            self.rect.centerx = int(self.x)
-        if y:
-            self.y += self.__track(self.rect.centery, y)
-            self.rect.centery = int(self.y)
+        self.x += self._track(self.rect.centerx, x)
+        self.rect.centerx = int(self.x)
+
+        self.y += self._track(self.rect.centery, y)
+        self.rect.centery = int(self.y)
 
         self.lasers.update()
         super().update()

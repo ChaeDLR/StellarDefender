@@ -1,5 +1,7 @@
-from pygame import Surface, Vector2, sprite, surfarray
+from pygame import Surface, sprite, surfarray
+from pygame import event, Vector2
 from typing import Tuple
+
 from ..settings import screen_dims
 from .laser import Laser
 
@@ -28,6 +30,7 @@ class Ship(sprite.Sprite):
         self.dying: bool = False
 
         self.lasers = sprite.Group()
+        self.__timers: list = []
 
     def _get_sprite_colors(self, img: Surface) -> tuple:
         """
@@ -42,6 +45,15 @@ class Ship(sprite.Sprite):
                     colors.append(rgb)
         colors.sort(key=sum)
         return tuple(colors)
+
+    def _track(self, start: int, dest: int, speed: int = 40) -> float:
+        """
+        calculate a gradual movement from
+        start ----> dest
+        increase speed variable to track slower
+        decrease to track faster
+        """
+        return (dest - start) / speed
 
     def __generate_particles(self) -> list:
         """
@@ -83,6 +95,20 @@ class Ship(sprite.Sprite):
         self.animation_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
+
+    @property
+    def timers(self):
+        return self.__timers
+
+    @timers.setter
+    def timers(self, val):
+        print("----------------------------------")
+        print(f"Value being checked = {val}\n")
+        if hasattr(val, "sprite"):
+            print(f"Value passed check!\n")
+            self.__timers.append(val)
+        else:
+            print("Value did not pass check\n")
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """
@@ -126,7 +152,7 @@ class Ship(sprite.Sprite):
             particle.update()
 
     def update(self) -> None:
-        """check for player updates"""
+        """Update damaged animation if ship is damaged"""
         if self.damaged:
             self.__animate()
 
