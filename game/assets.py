@@ -54,16 +54,26 @@ class Assets:
         return img
 
     @classmethod
-    def get_image(cls, key: str or list) -> Surface or dict:
+    def get_image(cls, key: str) -> Surface or dict:
         """Return img surface object or dict with all of the surface's pngs"""
         try:
-            return cls.__sprite_images[key]
-        except KeyError as ex:
+            if isinstance(sub_dict := cls.__sprite_images[key], dict):
+                copy_dict: dict = {}
+                for subkey in sub_dict:
+                    temp = sub_dict[subkey]
+                    copy_dict[subkey] = [
+                        surf.copy() for surf in sub_dict[subkey].values()
+                    ]
+                    return copy_dict
+                else:
+                    return cls.__sprite_images[key].copy()
+        except (KeyError, ValueError) as ex:
             raise ex.with_traceback()
 
     @classmethod
     def init(cls) -> None:
         cls.__load(cls, cls.__assets_directory, cls.__sprite_images)
+        print(f"\nItems from sprite images -> {cls.__sprite_images.items()}\n")
 
 
 if __name__ == "__main__":

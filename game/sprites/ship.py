@@ -97,18 +97,15 @@ class Ship(sprite.Sprite):
         self.movement_speed = self.base_speed
 
     @property
-    def timers(self):
+    def timers(self) -> list:
         return self.__timers
 
     @timers.setter
-    def timers(self, val):
-        print("----------------------------------")
-        print(f"Value being checked = {val}\n")
+    def timers(self, val: event.Event) -> None:
         if hasattr(val, "sprite"):
-            print(f"Value passed check!\n")
             self.__timers.append(val)
         else:
-            print("Value did not pass check\n")
+            raise ValueError
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """

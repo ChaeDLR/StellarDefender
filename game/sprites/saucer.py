@@ -12,17 +12,12 @@ class Saucer(Ship):
 
     def __init__(self) -> None:
         """Saucer enemy class"""
-        images = Assets.get_image("saucer")
-        print("=======================================")
-        # TODO: FIX KEYS
-        # Keys are currently the entire  path to the image
-        for key in images:
-            print(f"Imgs key: {key}\nKey's value = {images[key]}\n")
+        images: dict = Assets.get_image("saucer")
         # Image keys
         # "charge" -> "0", "1", "2"
         # "fire" -> "0", "1"
         # "idle" -> "0"
-        # super.__init__(images["idle"])
+        super().__init__(images["idle"][0])
 
         self.xbounds: tuple = (
             int(self.rect.width / 2),

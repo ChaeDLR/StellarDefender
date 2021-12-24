@@ -15,7 +15,6 @@ class Enemy(Ship):
         super().__init__(Assets.get_image("enemy"))
 
         self.health: int = 4
-        self.alpha: int = 255
         self.alpha_inc: int = -50
 
         self.basicatk_event: event.Event = event.Event(
