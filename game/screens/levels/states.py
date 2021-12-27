@@ -1,7 +1,7 @@
 from pygame import event, sprite, time
 from game import settings
 
-from ...sprites import Enemy
+from ...sprites import Enemy, Saucer
 
 
 class LevelOne:
@@ -18,20 +18,25 @@ class LevelOne:
             "lead": {
                 "sprite": Enemy(),
                 "off-set-x": None,
-                "off-set-y": int(img_height * 2.5),
+                "off-set-y": int(img_height * 3.5),
             },
             "left_flank": {
                 "sprite": Enemy(
                     1250,
                 ),
                 "off-set-x": int(img_width * 2.5),
-                "off-set-y": int((img_height / 2) + 1),
+                "off-set-y": int(img_height * 2.5),
             },
             "right_flank": {
                 "sprite": Enemy(
                     1500,
                 ),
                 "off-set-x": int((img_width * 2.5) * -1),
+                "off-set-y": int(img_height * 2.5),
+            },
+            "rear": {
+                "sprite": Saucer(),
+                "off-set-x": 0,
                 "off-set-y": int((img_height / 2) + 1),
             },
         }
@@ -50,17 +55,14 @@ class LevelOne:
         enemy.dying = False
         enemy.set_position((settings.width / 2), -50)
         enemy.cancel_timers()
-        time.set_timer(enemy.basicatk_event, enemy.basicatk_event.speed)
-        time.set_timer(enemy.specialatk_event, enemy.specialatk_event.speed)
+        for timer in enemy.timers:
+            time.set_timer(timer, timer.speed)
         self.group.add(enemy)
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
-        for enemy in self.group.sprites():
-            if event.type == enemy.basicatk_event.type:
-                event.sprite.create_laser()
-            elif event.type == enemy.specialatk_event.type:
-                event.sprite.create_special_laser()
+        if hasattr(event, "callback"):
+            event.callback()
 
     def update(self, player_x: int):
         """

@@ -8,10 +8,13 @@ class Assets:
     # this dict gets populated once the method get_sprite_images gets run once
     __sprite_images: dict = {}
 
-    def __load(cls, path: str, imgs_dict: dict) -> None:
+    def __load(cls, path: str, imgs_dict: dict, prev_key: str = None) -> None:
         """Load (__sprite_images: dict) with all the images in the path arg directory"""
+        if prev_key:
+            imgs_dict[prev_key] = {}
         img_size: tuple = (64, 64)
         temp_imgs: list = []
+
         for file in os.listdir(path):
             if file[len(file) - 4 :] == ".png":
                 img: Surface = cls.__load_image(
@@ -24,17 +27,21 @@ class Assets:
                     # single .pngs with their key in the title
                     str_parts = file[:-4].split("_")
                     imgs_dict[str_parts[0]] = img
-            else:
-                imgs_dict[file] = {}
-                cls.__load(
-                    cls,
-                    os.path.abspath(os.path.join(path, file)),
-                    imgs_dict[file],
-                )
 
+            else:
+                if prev_key:
+                    cls.__load(
+                        cls,
+                        os.path.abspath(os.path.join(path, file)),
+                        imgs_dict[prev_key],
+                        file,
+                    )
+                else:
+                    cls.__load(
+                        cls, os.path.abspath(os.path.join(path, file)), imgs_dict, file
+                    )
         if len(temp_imgs) > 0:
-            pathprts: list = path.split("\\")
-            imgs_dict[pathprts[len(pathprts) - 1]] = temp_imgs
+            imgs_dict[prev_key] = temp_imgs
 
     def __load_image(path: str, resize: tuple[int, int] = None):
         """
@@ -54,11 +61,17 @@ class Assets:
         return img
 
     @classmethod
-    def get_image(cls, key: str or list) -> Surface or dict:
+    def get_image(cls, key: str) -> Surface or dict:
         """Return img surface object or dict with all of the surface's pngs"""
         try:
-            return cls.__sprite_images[key]
-        except KeyError as ex:
+            if isinstance(sub_dict := cls.__sprite_images[key], dict):
+                copy_dict: dict = {}
+                for subkey in sub_dict:
+                    copy_dict[subkey] = [surf.copy() for surf in sub_dict[subkey]]
+                return copy_dict
+            else:
+                return cls.__sprite_images[key].copy()
+        except (KeyError, ValueError) as ex:
             raise ex.with_traceback()
 
     @classmethod
