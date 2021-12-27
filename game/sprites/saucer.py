@@ -19,19 +19,27 @@ class Saucer(Ship):
         # "idle" -> "0"
         super().__init__(images["idle"][0])
 
+        self.movement_speed: float = 3.5
+
         self.xbounds: tuple = (
             int(self.rect.width / 2),
             int(width - (self.rect.width / 2)),
         )
 
-    def update(self, *args, y: int):
+    def cancel_timers(self):
+        """Stop all of the class's timers"""
+        pass
+
+    def update(self, x: int, y: int):
         """update the saucer's position"""
 
-        if not (self.xbounds[0] < self.rect.centerx < self.xbounds[1]):
+        if not self.xbounds[0] <= self.rect.centerx <= self.xbounds[1]:
             self.movement_speed *= -1
         self.x += self.movement_speed
+        self.rect.x = int(self.x)
 
-        self.y += self._track(self.rect.centery, y)
-        self.rect.centery = int(self.y)
+        if y:
+            self.y += self._track(self.rect.centery, y)
+            self.rect.centery = int(self.y)
 
         super().update()

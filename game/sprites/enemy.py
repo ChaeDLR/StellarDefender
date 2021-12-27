@@ -19,16 +19,14 @@ class Enemy(Ship):
 
         self.basicatk_event: event.Event = event.Event(
             event.custom_type(),
-            {
-                "sprite": self,
-                "speed": attack_speed,
-            },
+            {"sprite": self, "speed": attack_speed, "callback": self.create_laser},
         )
         self.specialatk_event: event.Event = event.Event(
             event.custom_type(),
             {
                 "sprite": self,
                 "speed": int(attack_speed * 2.25),
+                "callback": self.create_special_laser,
             },
         )
         self.timers = self.basicatk_event
@@ -70,8 +68,9 @@ class Enemy(Ship):
         self.x += self._track(self.rect.centerx, x)
         self.rect.centerx = int(self.x)
 
-        self.y += self._track(self.rect.centery, y)
-        self.rect.centery = int(self.y)
+        if y:
+            self.y += self._track(self.rect.centery, y)
+            self.rect.centery = int(self.y)
 
         self.lasers.update()
         super().update()

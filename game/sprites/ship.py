@@ -15,7 +15,8 @@ class Ship(sprite.Sprite):
         super().__init__()
         self.screen_dims = screen_dims
 
-        self.image: Surface = img.copy()
+        self.image: Surface = img
+        self.colors: tuple = self._get_sprite_colors(self.image)
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
         self.moving_left, self.moving_right = False, False
@@ -30,7 +31,8 @@ class Ship(sprite.Sprite):
         self.dying: bool = False
 
         self.lasers = sprite.Group()
-        self.__timers: list = []
+        # hold the sprites custom events
+        self.__timers: list[event.Event] = []
 
     def _get_sprite_colors(self, img: Surface) -> tuple:
         """
@@ -95,6 +97,10 @@ class Ship(sprite.Sprite):
         self.animation_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
+
+    @property
+    def timer_types(self) -> list:
+        return [timer.type for timer in self.__timers]
 
     @property
     def timers(self) -> list:

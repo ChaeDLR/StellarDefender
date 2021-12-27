@@ -57,18 +57,12 @@ class LevelOne:
         enemy.cancel_timers()
         for timer in enemy.timers:
             time.set_timer(timer, timer.speed)
-        # TODO: delete this if it the timers are not broken
-        # time.set_timer(enemy.basicatk_event, enemy.basicatk_event.speed)
-        # time.set_timer(enemy.specialatk_event, enemy.specialatk_event.speed)
         self.group.add(enemy)
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
-        for enemy in self.group.sprites():
-            if event.type == enemy.basicatk_event.type:
-                event.sprite.create_laser()
-            elif event.type == enemy.specialatk_event.type:
-                event.sprite.create_special_laser()
+        if hasattr(event, "callback"):
+            event.callback()
 
     def update(self, player_x: int):
         """
