@@ -21,7 +21,7 @@ class Level(ScreenBase):
 
         self.sprites = pygame.sprite.Group(self.player)
 
-        pygame.mouse.set_cursor(pygame.cursors.broken_x)
+        pygame.mouse.set_visible(False)
 
     def __check_collisions(self):
         """check for collision between sprites"""
@@ -39,31 +39,6 @@ class Level(ScreenBase):
                     if self.player.health <= 0:
                         enemy.cancel_timers()
                         pygame.time.set_timer(self.GAME_OVER, 1500, True)
-
-    def __player_keydown_controller(self, event):
-        """respond to player inputs"""
-        if hasattr(event, "button"):
-            if self.player.health > 0 and event.button == 1:
-                self.player.firing = True
-
-        if hasattr(event, "key"):
-            if event.key == pygame.K_a:
-                self.player.moving_left = True
-
-            if event.key == pygame.K_d:
-                self.player.moving_right = True
-
-    def __player_keyup_controller(self, event):
-        if hasattr(event, "button"):
-            if event.button == 1:
-                self.player.firing = False
-
-        if hasattr(event, "key"):
-            if event.key == pygame.K_a:
-                self.player.moving_left = False
-
-            if event.key == pygame.K_d:
-                self.player.moving_right = False
 
     def __update(self):
         """updates and displays game objects"""
@@ -110,21 +85,39 @@ class Level(ScreenBase):
                 if not visible:
                     sprite.kill()
 
+    def __player_keydown_controller(self, event):
+        """respond to player inputs"""
+        if event.key == pygame.K_SPACE:
+            if self.player.health > 0:
+                self.player.firing = True
+
+        elif event.key == pygame.K_a:
+            self.player.moving_left = True
+
+        elif event.key == pygame.K_d:
+            self.player.moving_right = True
+
+    def __player_keyup_controller(self, event):
+        if event.key == pygame.K_SPACE:
+            self.player.firing = False
+
+        elif event.key == pygame.K_a:
+            self.player.moving_left = False
+
+        elif event.key == pygame.K_d:
+            self.player.moving_right = False
+
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.paused = False if self.paused else True
-            if self.paused:
-                return
-            self.__player_keydown_controller(event)
+                if self.paused:
+                    return
+            else:
+                self.__player_keydown_controller(event)
 
         elif event.type == pygame.KEYUP:
-            self.__player_keyup_controller(event)
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            self.__player_keydown_controller(event)
-        elif event.type == pygame.MOUSEBUTTONUP:
             self.__player_keyup_controller(event)
 
         if hasattr(event, "sprite"):

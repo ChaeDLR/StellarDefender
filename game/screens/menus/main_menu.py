@@ -25,8 +25,6 @@ class MainMenu(MenuBase):
             y_pos=(self.rect.height / 2) + 100,
         )
 
-        mouse.set_cursor(cursors.arrow)
-
     def __check_mousedown_events(self, mouse_pos):
         """check for mousedown events"""
         self.start_button.check_button(mouse_pos)

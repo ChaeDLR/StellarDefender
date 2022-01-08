@@ -1,5 +1,5 @@
-width: int = 600
+width: int = 1280
 
-height: int = 800
+height: int = 720
 
 screen_dims: tuple = (width, height)

@@ -1,5 +1,5 @@
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
-from pygame import event
+from pygame import event, mouse
 from .menu_base import MenuBase
 from .components.button import Button
 
@@ -27,6 +27,8 @@ class GameOver(MenuBase):
             x_pos=midx,
             y_pos=(self.rect.height / 2) + 200,
         )
+
+        mouse.set_visible(True)
 
     def __check_mousedown_events(self, mouse_pos):
         self.main_menu_button.check_button(mouse_pos)

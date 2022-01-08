@@ -6,6 +6,11 @@ ___
 
 ![](demo.gif)
 
+## Controls
+Move left - a
+Move right - d
+Fire laser - space
+
 ## Ships
 ___
 
