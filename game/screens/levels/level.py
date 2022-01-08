@@ -3,6 +3,7 @@ import pygame
 from .states import LevelOne
 from ...sprites import Player
 from ..screen_base import ScreenBase
+from ..menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
@@ -20,6 +21,8 @@ class Level(ScreenBase):
         )
 
         self.sprites = pygame.sprite.Group(self.player)
+
+        self.pause_menu: PauseMenu = PauseMenu(self.unpause)
 
         pygame.mouse.set_visible(False)
 
@@ -42,6 +45,10 @@ class Level(ScreenBase):
 
     def __update(self):
         """updates and displays game objects"""
+        if self.paused:
+            self.pause_menu.update()
+            return
+
         self.state.update(player_x=self.player.rect.centerx)
         self.__check_collisions()
         self.background.update()
@@ -84,6 +91,9 @@ class Level(ScreenBase):
                 # less than zero remove sprite from all groups
                 if not visible:
                     sprite.kill()
+        if self.paused:
+            # TODO: make pause menu appear
+            self.image.blit(self.pause_menu.image, self.pause_menu.rect)
 
     def __player_keydown_controller(self, event):
         """respond to player inputs"""
@@ -112,21 +122,24 @@ class Level(ScreenBase):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.paused = False if self.paused else True
-                if self.paused:
-                    return
+                pygame.mouse.set_visible(True)
             else:
                 self.__player_keydown_controller(event)
 
         elif event.type == pygame.KEYUP:
             self.__player_keyup_controller(event)
 
-        if hasattr(event, "sprite"):
+        elif hasattr(event, "sprite"):
             self.state.check_events(event)
 
-        if event.type == self.GAME_OVER:
+        elif event.type == self.GAME_OVER:
             pygame.mouse.set_cursor(pygame.cursors.arrow)
             self.change_screen = True
             self.new_screen = "game_over"
+
+    def unpause(self):
+        self.paused = False
+        pygame.mouse.set_visible(False)
 
     def update(self):
         """Update level elements and draw to level's main surface"""

@@ -9,7 +9,7 @@ class SpaceGame:
     def __init__(self):
         pygame.init()
         self.main_screen = pygame.display.set_mode(
-            (self.width, self.height), flags=pygame.SCALED, vsync=1
+            (self.width, self.height), flags=pygame.SCALED | pygame.SRCALPHA, vsync=1
         )
         game.Assets.init()
 
@@ -42,8 +42,8 @@ class SpaceGame:
         while 1:
             self.clock.tick(60)
             if self.active_screen.change_screen:
+                self.active_screen.change_screen = False
                 self.active_screen = self.__get_active_screen()
-                self.change_screen = False
 
             self.__check_events()
             self.active_screen.update()

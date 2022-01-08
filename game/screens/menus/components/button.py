@@ -10,6 +10,7 @@ class Button:
         button_text: str,
         size: tuple = (150, 50),
         font_size: int = 40,
+        pos: tuple[int, int] = (0, 0),
     ):
         """
         surface: Surface -> Menu image,

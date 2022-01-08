@@ -1,43 +1,39 @@
 from pygame import SRCALPHA
+from pygame import mouse
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
-from ..screen_base import ScreenBase
+from .menu_base import MenuBase
 from .components.button import Button
 
+from typing import Callable
 
-class PauseMenu(ScreenBase):
-    def __init__(self, unpause_func):
-        super().__init__(flags=SRCALPHA)
+
+class PauseMenu(MenuBase):
+    def __init__(self, unpause_func: Callable):
+        super().__init__()
         self.background_color = (
-            self.background_color[0],
-            self.background_color[1],
-            self.background_color[2],
+            10,
+            10,
+            10,
             175,
         )
         self.unpause_function = unpause_func
-        self.buttons = self.__load_buttons()
 
-        self.text_image, self.text_image_rect = self.create_text(
-            (self.rect.centerx, 60), "PAUSED", boldtext=False
-        )
+        self.text_image, self.text_image_rect = self.create_title("PAUSED")
 
-    def __load_buttons(self) -> list:
-        self.resume_button = Button(self.image, "Resume")
-        self.resume_button.convert_alpha()
-        self.quit_button = Button(self.image, "Quit")
-        self.quit_button.convert_alpha()
-        self.resume_button.set_position(y_pos=(self.height / 2))
-        return [self.resume_button, self.quit_button]
+        self.buttons: list[Button] = self.create_buttons(["Resume", "Quit"])
 
     def __check_button_down(self, mouse_pos):
-        self.resume_button.check_button(mouse_pos)
-        self.quit_button.check_button(mouse_pos)
+        for button in self.buttons:
+            button.check_button(mouse_pos)
 
     def __check_button_up(self, mouse_pos):
-        if self.resume_button.check_button(mouse_pos, True):
-            self.unpause_function()
-        elif self.quit_button.check_button(mouse_pos, True):
-            ScreenBase.change_screen = True
-            ScreenBase.current_screen_key = "main_menu"
+        for button in self.buttons:
+            if button.check_button(mouse_pos, True):
+                if button.name == "resume":
+                    self.unpause_function()
+                elif button.name == "quit":
+                    self.change_screen = True
+                    self.new_sceen = "main_menu"
         else:
             for button in self.buttons:
                 button.reset_alpha()
@@ -51,5 +47,6 @@ class PauseMenu(ScreenBase):
     def update(self):
         self.image.fill(self.background_color)
         self.image.blit(self.text_image, self.text_image_rect)
-        self.quit_button.blitme()
-        self.resume_button.blitme()
+
+        for button in self.buttons:
+            self.image.blit(button.image, button.rect)
