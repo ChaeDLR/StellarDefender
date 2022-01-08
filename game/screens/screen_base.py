@@ -20,8 +20,9 @@ class ScreenBase(metaclass=ABCMeta):
     background = Background(screen_dims)
     width, height = screen_dims
 
-    image = Surface(screen_dims, flags=SRCALPHA)
-    rect = image.get_rect()
+    def __init__(self) -> None:
+        self.image = Surface(screen_dims, flags=SRCALPHA).convert_alpha()
+        self.rect = self.image.get_rect()
 
     @classmethod
     def __subclasshook__(cls, subclass):

@@ -29,8 +29,7 @@ class Enemy(Ship):
                 "callback": self.create_special_laser,
             },
         )
-        self.timers = self.basicatk_event
-        self.timers = self.specialatk_event
+        self.add_timer([self.basicatk_event, self.specialatk_event])
 
         if not Enemy.colors:
             Enemy.colors = self._get_sprite_colors(self.image)

@@ -1,6 +1,6 @@
 from pygame import Surface, sprite, surfarray
-from pygame import event, Vector2
-from typing import Tuple
+from pygame import event, Vector2, time
+from typing import Union
 
 from ..settings import screen_dims
 from .laser import Laser
@@ -106,12 +106,26 @@ class Ship(sprite.Sprite):
     def timers(self) -> list:
         return self.__timers
 
-    @timers.setter
-    def timers(self, val: event.Event) -> None:
-        if hasattr(val, "sprite"):
-            self.__timers.append(val)
+    def add_timer(self, timer: Union[event.Event, list[event.Event]]) -> None:
+        """add a single timer or a list of timers"""
+        if isinstance(timer, list):
+            for new_timer in timer:
+                if hasattr(new_timer, "sprite"):
+                    self.__timers.append(new_timer)
+        elif isinstance(timer, event.Event) and hasattr(event, "sprite"):
+            self.__timers.append(timer)
         else:
             raise ValueError
+
+    def start_timers(self) -> None:
+        """start all of the class's timers"""
+        for timer in self.__timers:
+            time.set_timer(timer, timer.speed)
+
+    def pause_timers(self) -> None:
+        """pause all of the timers and capture their progress rate"""
+        for timer in self.__timers:
+            time.set_timer(timer, 0)
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """
@@ -187,7 +201,7 @@ class _Particle:
         radius: int,
         velocity: float,
         offset: tuple,
-        center: Tuple[int, int],
+        center: tuple[int, int],
     ):
 
         self.color: list = list(color)

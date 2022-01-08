@@ -10,6 +10,7 @@ class MainMenu(MenuBase):
     """
 
     def __init__(self):
+        super().__init__()
 
         self.title, self.title_rect = self.create_title("Stellar-D")
 

@@ -15,31 +15,38 @@ class Assets:
         img_size: tuple = (64, 64)
         temp_imgs: list = []
 
-        for file in os.listdir(path):
-            if file[len(file) - 4 :] == ".png":
-                img: Surface = cls.__load_image(
-                    path=os.path.join(path, file), resize=img_size
-                )
-
-                if file[:-4].isdigit():
-                    temp_imgs.append(img)
-                else:
-                    # single .pngs with their key in the title
-                    str_parts = file[:-4].split("_")
-                    imgs_dict[str_parts[0]] = img
-
-            else:
-                if prev_key:
-                    cls.__load(
-                        cls,
-                        os.path.abspath(os.path.join(path, file)),
-                        imgs_dict[prev_key],
-                        file,
+        try:
+            for file in os.listdir(path):
+                if file[len(file) - 4 :] == ".png":
+                    img: Surface = cls.__load_image(
+                        path=os.path.join(path, file), resize=img_size
                     )
+
+                    if file[:-4].isdigit():
+                        temp_imgs.append(img)
+                    else:
+                        # single .pngs with their key in the title
+                        str_parts = file[:-4].split("_")
+                        imgs_dict[str_parts[0]] = img
+
                 else:
-                    cls.__load(
-                        cls, os.path.abspath(os.path.join(path, file)), imgs_dict, file
-                    )
+                    if prev_key:
+                        cls.__load(
+                            cls,
+                            os.path.abspath(os.path.join(path, file)),
+                            imgs_dict[prev_key],
+                            file,
+                        )
+                    else:
+                        cls.__load(
+                            cls,
+                            os.path.abspath(os.path.join(path, file)),
+                            imgs_dict,
+                            file,
+                        )
+        except NotADirectoryError as ex:
+            print(f"{ex.filename} not an accepted file type.")
+
         if len(temp_imgs) > 0:
             imgs_dict[prev_key] = temp_imgs
 

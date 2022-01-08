@@ -6,6 +6,7 @@ from .components.button import Button
 
 class GameOver(MenuBase):
     def __init__(self):
+        super().__init__()
 
         self.title, self.title_rect = self.create_title("GAME OVER")
 

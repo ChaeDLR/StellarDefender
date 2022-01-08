@@ -54,10 +54,12 @@ class LevelOne:
         enemy.health = 4
         enemy.dying = False
         enemy.set_position((settings.width / 2), -50)
-        enemy.cancel_timers()
-        for timer in enemy.timers:
-            time.set_timer(timer, timer.speed)
         self.group.add(enemy)
+
+    def pause(self) -> None:
+        """pause the states active timers"""
+        for enemy in self.group:
+            enemy.pause_timers()
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
