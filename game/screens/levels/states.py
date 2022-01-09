@@ -1,3 +1,4 @@
+from typing import Callable
 from pygame import event, sprite, time
 from game import settings
 
@@ -54,6 +55,7 @@ class LevelOne:
         enemy.health = 4
         enemy.dying = False
         enemy.set_position((settings.width / 2), -50)
+        enemy.start_timers()
         self.group.add(enemy)
 
     def pause(self) -> None:
@@ -61,10 +63,19 @@ class LevelOne:
         for enemy in self.group:
             enemy.pause_timers()
 
+    def unpause(self) -> None:
+        for enemy in self.group:
+            enemy.unpause_timers()
+
     def check_events(self, event: event.Event):
         """Check state specific events"""
+        # attack events
         if hasattr(event, "callback"):
             event.callback()
+        # revive loop event
+        elif hasattr(event, "revive_loop"):
+            event.revive_loop()
+            self.unpause()
 
     def update(self, player_x: int):
         """

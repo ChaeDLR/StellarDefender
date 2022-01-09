@@ -1,5 +1,4 @@
 import pygame
-from pygame.event import Event
 
 from .states import LevelOne
 from ...sprites import Player
@@ -10,7 +9,7 @@ from ..menus.pause_menu import PauseMenu
 class Level(ScreenBase):
     GAME_OVER = pygame.event.custom_type()
 
-    __events: list[Event] = []
+    __events: list[pygame.event.Event] = []
 
     def __init__(self) -> None:
         super().__init__()
@@ -96,7 +95,6 @@ class Level(ScreenBase):
                 if not visible:
                     sprite.kill()
         if self.paused:
-            # TODO: make pause menu appear
             self.image.blit(self.pause_menu.image, self.pause_menu.rect)
 
     def __player_keydown_controller(self, event):
@@ -123,26 +121,33 @@ class Level(ScreenBase):
 
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
+        if self.paused:
+            self.pause_menu.check_events(event)
+            return
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                self.paused = False if self.paused else True
-                self.state.pause()
-                pygame.mouse.set_visible(True)
+                if self.paused:
+                    self.unpause()
+                else:
+                    self.state.pause()
+                    self.paused = True
+                    pygame.mouse.set_visible(True)
             else:
                 self.__player_keydown_controller(event)
 
         elif event.type == pygame.KEYUP:
             self.__player_keyup_controller(event)
 
-        elif hasattr(event, "sprite"):
-            self.state.check_events(event)
-
         elif event.type == self.GAME_OVER:
             pygame.mouse.set_cursor(pygame.cursors.arrow)
             self.change_screen = True
             self.new_screen = "game_over"
 
-    def unpause(self):
+        else:
+            self.state.check_events(event)
+
+    def unpause(self) -> None:
+        self.state.unpause()
         self.paused = False
         pygame.mouse.set_visible(False)
 

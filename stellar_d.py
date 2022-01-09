@@ -19,6 +19,8 @@ class SpaceGame:
             "game_over": game.GameOver,
         }
 
+        pygame.event.set_blocked([pygame.MOUSEMOTION])
+
         self.active_screen = self.screens["main_menu"]()
         self.clock = pygame.time.Clock()
 
