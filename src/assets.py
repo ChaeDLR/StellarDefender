@@ -4,7 +4,7 @@ from pygame import Surface, image, transform
 
 
 class Assets:
-    __assets_directory: str = os.path.abspath(os.path.join(os.getcwd(), "game/images"))
+    __assets_directory: str = os.path.abspath(os.path.join(os.getcwd(), "images"))
     # this dict gets populated once the method get_sprite_images gets run once
     __sprite_images: dict = {}
 

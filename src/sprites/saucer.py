@@ -1,5 +1,5 @@
 from pygame import event, time
-from game import Assets
+from src import Assets
 
 from .ship import Ship
 from ..settings import width

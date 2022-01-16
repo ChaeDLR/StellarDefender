@@ -1,5 +1,5 @@
-from game.sprites.laser import Laser
-from game import Assets
+from src.sprites.laser import Laser
+from src import Assets
 from pygame import time
 
 from .ship import Ship

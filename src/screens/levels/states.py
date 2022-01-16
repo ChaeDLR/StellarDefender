@@ -1,6 +1,5 @@
-from typing import Callable
-from pygame import event, sprite, time
-from game import settings
+from pygame import event, sprite
+from src import settings
 
 from ...sprites import Enemy, Saucer
 

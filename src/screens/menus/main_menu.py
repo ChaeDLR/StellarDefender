@@ -39,7 +39,5 @@ class MainMenu(MenuBase):
             self.__check_mouseup_events(event.pos)
 
     def update(self):
-        self.background.update()
-        self.image.blit(self.background.image, self.background.rect)
         self.image.blits(self.button_blit_seq)
         self.image.blit(self.title, self.title_rect)

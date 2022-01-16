@@ -54,7 +54,6 @@ class Level(ScreenBase):
 
         self.state.update(player_x=self.player.rect.centerx)
         self.__check_collisions()
-        self.background.update()
 
         for sprite in self.sprites:
             if sprite.health > 0:
@@ -63,8 +62,6 @@ class Level(ScreenBase):
                 sprite.update_particles()
 
     def __draw(self):
-        self.image.blit(self.background.image, self.background.rect)
-
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
 
             for laser in sprite.lasers:

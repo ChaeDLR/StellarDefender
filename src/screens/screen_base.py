@@ -1,4 +1,3 @@
-from .background import Background
 from ..settings import screen_dims
 
 from abc import ABCMeta
@@ -17,7 +16,6 @@ class ScreenBase(metaclass=ABCMeta):
     # screen's key will be the file name of the screen without ".py"
     new_screen: str = "main_menu"
 
-    background = Background(screen_dims)
     width, height = screen_dims
 
     def __init__(self) -> None:
@@ -32,3 +30,7 @@ class ScreenBase(metaclass=ABCMeta):
             and hasattr(subclass, "update")
             and callable(subclass.update)
         )
+
+    def change_screen(self):
+        """change the active screen"""
+        return 0

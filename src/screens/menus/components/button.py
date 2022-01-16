@@ -28,13 +28,17 @@ class Button:
         self.rect = self.image.get_rect()
         self.name = button_text
 
+        self.set_text(button_text, font_size)
+        self.set_position(pos)
+
+    def set_text(self, text: str, font_size: int):
+        """set the buttons msg_text and msg_text_rect"""
         text_font = font.SysFont(None, font_size, bold=True)
         self.msg_image = text_font.render(
-            button_text, True, self.text_color, self.button_color
+            text, True, self.text_color, self.button_color
         )
         self.msg_image_rect = self.msg_image.get_rect()
-        self.set_position(pos)
-        self.image.blit(self.msg_image, self.rect.center, self.msg_image_rect)
+        self.msg_image_rect.center = self.rect.center
 
     def check_button(self, mouse_pos, mouse_up: bool = False) -> bool:
         """check for button collision"""

@@ -23,14 +23,14 @@ class MenuBase(ScreenBase):
         self, seq: list[any]
     ) -> Sequence[Tuple[pygame.Surface, pygame.Rect]]:
         """list can contain any class with a image: pygame.Surface and a rect: pygame.Rect"""
-        button_seq = []
-        try:
-            for item in seq:
-                button_seq.append((item.image, item.rect))
-                button_seq.append((item.msg_image, item.msg_image_rect))
-        except:
-            raise
-        self.__button_blit_seq = button_seq
+        for item in seq:
+            try:
+                self.__button_blit_seq.append((item.image, item.rect))
+                self.__button_blit_seq.append((item.msg_image, item.msg_image_rect))
+            except:
+                print("\nLOOP")
+                print(f"Failed to add Button object to list")
+                print(f"Not a valid button object -> {item}.")
 
     @property
     def row(self) -> int:
@@ -47,7 +47,7 @@ class MenuBase(ScreenBase):
         return (title_image, title_rect)
 
     def create_buttons(self, names: list[str]) -> list[Button]:
-        """names[0] will be the button"""
+        """0 index will be the top button"""
         buttons: list[Button] = []
         for i, name in enumerate(names, 1):
             buttons.append(
@@ -59,5 +59,5 @@ class MenuBase(ScreenBase):
                     ),
                 )
             )
-            self.button_blit_seq = buttons
+        self.button_blit_seq = buttons
         return buttons
