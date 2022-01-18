@@ -10,27 +10,28 @@ from pygame.font import SysFont
 
 class MenuBase(ScreenBase):
 
-    __button_blit_seq: Sequence[Tuple[pygame.Surface, pygame.Rect]] = []
-
     __row: int = height / 8
 
-    @property
-    def button_blit_seq(self) -> Sequence[Tuple[pygame.Surface, pygame.Rect]]:
-        return self.__button_blit_seq
+    def __init__(self, title: str, buttons_: list[str]) -> None:
+        super().__init__()
+        self.title, self.title_rect = self.create_title(title)
+        self.buttons: list[Button] = self.create_buttons(buttons_)
+        self.button_blit_seq = self._get_blitseq(self.buttons)
 
-    @button_blit_seq.setter
-    def button_blit_seq(
+    def _get_blitseq(
         self, seq: list[any]
     ) -> Sequence[Tuple[pygame.Surface, pygame.Rect]]:
         """list can contain any class with a image: pygame.Surface and a rect: pygame.Rect"""
+        button_seq: list = []
         for item in seq:
             try:
-                self.__button_blit_seq.append((item.image, item.rect))
-                self.__button_blit_seq.append((item.msg_image, item.msg_image_rect))
+                button_seq.append((item.image, item.rect))
+                button_seq.append((item.msg_image, item.msg_image_rect))
             except:
                 print("\nLOOP")
                 print(f"Failed to add Button object to list")
                 print(f"Not a valid button object -> {item}.")
+        return button_seq
 
     @property
     def row(self) -> int:

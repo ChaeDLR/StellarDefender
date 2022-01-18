@@ -1,7 +1,8 @@
-from ..settings import screen_dims
+from ..settings import size
 
 from abc import ABCMeta
 from pygame import Surface
+from pygame import event
 from pygame.constants import SRCALPHA
 
 
@@ -14,12 +15,16 @@ class ScreenBase(metaclass=ABCMeta):
     change_screen: bool = False
     # next active screen's key | First active screen is main menu
     # screen's key will be the file name of the screen without ".py"
-    new_screen: str = "main_menu"
+    next_screen: str = "main_menu"
 
-    width, height = screen_dims
+    width, height = size
+
+    CHANGESCREEN: int = event.custom_type()
+    PAUSE: int = event.custom_type()
 
     def __init__(self) -> None:
-        self.image = Surface(screen_dims, flags=SRCALPHA).convert_alpha()
+        self.image = Surface(size, flags=SRCALPHA).convert_alpha()
+        self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
 
     @classmethod
@@ -29,8 +34,6 @@ class ScreenBase(metaclass=ABCMeta):
             and callable(subclass.check_events)
             and hasattr(subclass, "update")
             and callable(subclass.update)
+            and hasattr(subclass, "change_screen")
+            and callable(subclass.change_screen)
         )
-
-    def change_screen(self):
-        """change the active screen"""
-        return 0

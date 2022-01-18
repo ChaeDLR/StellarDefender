@@ -1,25 +1,22 @@
-import pygame
+from pygame import event
+from pygame.constants import MOUSEBUTTONDOWN
+from pygame.constants import MOUSEBUTTONUP
+
 from .menu_base import MenuBase
 from .components.button import Button
 
 from sys import exit
-from typing import Callable
 
 
 class PauseMenu(MenuBase):
-    def __init__(self, unpause: Callable):
-        super().__init__()
+    def __init__(self):
+        super().__init__("PAUSED", ["Resume", "Quit"])
         self.background_color = (
             10,
             10,
             10,
-            175,
+            55,
         )
-        self.unpause = unpause
-
-        self.text_image, self.text_image_rect = self.create_title("PAUSED")
-
-        self.buttons: list[Button] = self.create_buttons(["Resume", "Quit"])
 
     def __check_button_down(self, mouse_pos):
         for button in self.buttons:
@@ -29,7 +26,7 @@ class PauseMenu(MenuBase):
         for button in self.buttons:
             if button.check_button(mouse_pos, True):
                 if button.name == "Resume":
-                    self.unpause()
+                    event.post(event.Event(self.PAUSE))
                 elif button.name == "Quit":
                     exit()
         else:
@@ -37,12 +34,12 @@ class PauseMenu(MenuBase):
                 button.reset_alpha()
 
     def check_events(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
+        if event.type == MOUSEBUTTONDOWN:
             self.__check_button_down(event.pos)
-        elif event.type == pygame.MOUSEBUTTONUP:
+        elif event.type == MOUSEBUTTONUP:
             self.__check_button_up(event.pos)
 
     def update(self):
         self.image.fill(self.background_color)
-        self.image.blit(self.text_image, self.text_image_rect)
+        self.image.blit(self.title, self.title_rect)
         self.image.blits(self.button_blit_seq)

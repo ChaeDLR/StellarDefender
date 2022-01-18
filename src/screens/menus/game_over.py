@@ -6,15 +6,11 @@ from .components.button import Button
 
 class GameOver(MenuBase):
     def __init__(self):
-        super().__init__()
-
-        self.title, self.title_rect = self.create_title("GAME OVER")
-
-        # main menu font needs to be 35
-        self.buttons: list[Button] = self.create_buttons(["Main Menu", "Retry", "Quit"])
+        super().__init__("Game Over", ["Main Menu", "Retry", "Quit"])
 
         # adjust the main menu buttons font
-        self.buttons[0].set_text("Main Menu", 35)
+        self.buttons[0].set_text("Main Menu", 32)
+        self.button_blit_seq = self._get_blitseq(self.buttons)
 
         mouse.set_visible(True)
 
@@ -28,13 +24,11 @@ class GameOver(MenuBase):
         for button in self.buttons:
             if button.check_button(mouse_pos, True):
                 if button.name == "Main Menu":
-                    print("Switching to main menu")
-                    self.change_screen = True
-                    self.new_screen = "main_menu"
+                    self.next_screen = "main_menu"
+                    event.post(event.Event(self.CHANGESCREEN))
                 elif button.name == "Retry":
-                    print("switching to level")
-                    self.change_screen = True
-                    self.new_screen = "level"
+                    self.next_screen = "level"
+                    event.post(event.Event(self.CHANGESCREEN))
                 elif button.name == "Quit":
                     event.clear()
                     event.post(event.Event(QUIT))
@@ -46,5 +40,6 @@ class GameOver(MenuBase):
             self.__check_mouseup_events(event.pos)
 
     def update(self):
+        self.image.fill((0, 0, 0))
         self.image.blit(self.title, self.title_rect)
         self.image.blits(self.button_blit_seq)

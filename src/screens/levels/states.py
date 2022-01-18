@@ -54,27 +54,23 @@ class LevelOne:
         enemy.health = 4
         enemy.dying = False
         enemy.set_position((settings.width / 2), -50)
-        enemy.start_timers()
+        enemy.attack()
         self.group.add(enemy)
 
     def pause(self) -> None:
         """pause the states active timers"""
         for enemy in self.group:
-            enemy.pause_timers()
+            enemy.capture_attack_timers()
 
     def unpause(self) -> None:
         for enemy in self.group:
-            enemy.unpause_timers()
+            enemy.resume()
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
         # attack events
-        if hasattr(event, "callback"):
-            event.callback()
-        # revive loop event
-        elif hasattr(event, "revive_loop"):
-            event.revive_loop()
-            self.unpause()
+        if hasattr(event, "attack"):
+            event.attack()
 
     def update(self, player_x: int):
         """

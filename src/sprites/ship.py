@@ -3,9 +3,7 @@ from pygame import event, Vector2, time
 
 from typing import Union
 
-import pygame
-
-from ..settings import screen_dims
+from ..settings import size
 from .laser import Laser
 
 
@@ -25,12 +23,9 @@ class Ship(sprite.Sprite):
     damaged: bool = False
     dying: bool = False
 
-    # hold the sprites custom events
-    _timers: list[event.Event] = []
-
     def __init__(self, img: Surface):
         super().__init__()
-        self.screen_dims = screen_dims
+        self.screen_size = size
 
         self.image: Surface = img
         self.colors: tuple = self._get_sprite_colors(self.image)
@@ -40,15 +35,6 @@ class Ship(sprite.Sprite):
         self.image.set_alpha(self.alpha)
 
         self.lasers = sprite.Group()
-
-    def __del__(self):
-        """sprite finalizer"""
-        try:
-            for timer in self._timers:
-                time.set_timer(timer, 0)
-            event.get(self.timer_types)
-        except:
-            print(f"Timer: {timer}, failed.")
 
     def _get_sprite_colors(self, img: Surface) -> tuple:
         """
@@ -113,55 +99,6 @@ class Ship(sprite.Sprite):
         self.animation_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
-
-    @property
-    def timer_types(self) -> list:
-        return [timer.type for timer in self._timers]
-
-    @property
-    def timers(self) -> list:
-        return self._timers
-
-    def add_timer(self, timer: Union[event.Event, list[event.Event]]) -> None:
-        """add a single timer or a list of timers"""
-        if isinstance(timer, list):
-            for new_timer in timer:
-                if hasattr(new_timer, "sprite"):
-                    self._timers.append(new_timer)
-        elif isinstance(timer, event.Event) and hasattr(event, "sprite"):
-            self._timers.append(timer)
-        else:
-            print(f"Timer: {timer} is invalid.")
-            raise
-
-    def start_timers(self) -> None:
-        """start all of the class's timers"""
-        for timer in self._timers:
-            time.set_timer(timer, timer.speed)
-
-    def cancel_timers(self) -> None:
-        for timer in self._timers:
-            time.set_timer(timer, 0)
-
-    def pause_timers(self) -> None:
-        """cancel all of the timers and capture their progress rate"""
-        ticks = time.get_ticks()
-        for timer in self._timers:
-            cap: int = ticks - timer.capture
-
-            if cap >= timer.speed:
-                cap = timer.speed
-
-            timer.capture = cap
-            time.set_timer(timer, 0)
-            pygame.event.clear(timer.type)
-            print("clearing timers")
-
-    def unpause_timers(self) -> None:
-        """resume paused timers and restart their loops"""
-        for timer in self._timers:
-            time.set_timer(timer, timer.capture, 1)
-            time.set_timer(timer.vivify, timer.capture, 1)
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """

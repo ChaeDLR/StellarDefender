@@ -1,6 +1,6 @@
 from pygame import event, time
-from src import Assets
 
+from ..assets import Assets
 from .laser import SLaser
 from .ship import Ship
 
@@ -17,47 +17,64 @@ class Enemy(Ship):
         self.health: int = 4
         self.alpha_inc: int = -50
 
-        self.revive_loop = event.Event(
-            event.custom_type(), {"revive_loop": self.start_timers}
-        )
-
         self.basicatk_event = event.Event(
-            event.custom_type(),
-            {
-                "sprite": self,
-                "speed": attack_speed,
-                "callback": self.create_laser,
-                "capture": 0,
-                "vivify": self.revive_loop,
-            },
-        )
+                    event.custom_type(),
+                        {
+                    "speed": attack_speed,
+                    "capture": 0,
+                    "attack": self.create_laser
+                    }
+                )
         self.specialatk_event = event.Event(
-            event.custom_type(),
-            {
-                "sprite": self,
-                "speed": int(attack_speed * 2.25),
-                "callback": self.create_special_laser,
-                "capture": 0,
-                "vivify": self.revive_loop,
-            },
-        )
-        self.add_timer([self.basicatk_event, self.specialatk_event])
+                    event.custom_type(),
+                        {
+                    "speed": int(attack_speed * 2.25),
+                    "capture": 0,
+                    "attack": self.create_special_laser
+                    }
+                )
 
         if not Enemy.colors:
             Enemy.colors = self._get_sprite_colors(self.image)
 
-    def start_timers(self) -> None:
-        """override"""
-        time.set_timer(self.basicatk_event, self.basicatk_event.speed)
-        time.set_timer(self.specialatk_event, self.specialatk_event.speed)
+    def resume(self) -> None:
+        """start attacks from captures"""
+        self.basic_attack(True)
+        self.special_attack(True)
 
-    def take_damage(self, value):
-        super().take_damage(value)
-        if self.dying:
-            self.cancel_timers()
+    def attack(self) -> None:
+        """start enemy's attack timers"""
+        self.basic_attack()
+        self.special_attack()
+
+    def basic_attack(self, resume: bool=False) -> None:
+        """send attack events to the event queue on timers"""
+        if resume:
+            time.set_timer(self.basicatk_event, self.basicatk_event.capture, 1)
+        else:
+            time.set_timer(self.basicatk_event, self.basicatk_event.speed, 1)
+        self.basicatk_event.capture = time.get_ticks()
+
+    def special_attack(self, resume: bool=False) -> None:
+        if resume:
+            time.set_timer(self.specialatk_event, self.specialatk_event.capture, 1)
+        else:
+            time.set_timer(self.specialatk_event, self.specialatk_event.speed, 1)
+        self.specialatk_event.capture = time.get_ticks()
+
+    def capture_attack_timers(self) -> None:
+        horas: int = time.get_ticks()
+        self.basicatk_event.capture = horas - self.basicatk_event.capture
+        if self.basicatk_event.capture > self.basicatk_event.speed:
+            self.basicatk_event.capture = self.basicatk_event.speed
+
+        self.specialatk_event.capture = horas - self.specialatk_event.capture
+        if self.specialatk_event.capture > self.specialatk_event.speed:
+            self.specialatk_event.capture = self.specialatk_event.speed
 
     def create_laser(self):
         super().create_laser(1, self.rect.bottom)
+        self.basic_attack()
 
     def create_special_laser(self):
         """
@@ -66,6 +83,7 @@ class Enemy(Ship):
         s_laser: SLaser = SLaser(1)
         s_laser.set_position(self.rect.midbottom[0], self.rect.midbottom[1])
         self.lasers.add(s_laser)
+        self.special_attack()
 
     def update_particles(self) -> None:
         """update particle effect"""

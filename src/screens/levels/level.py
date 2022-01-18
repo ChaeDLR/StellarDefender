@@ -7,15 +7,14 @@ from ..menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
-    GAME_OVER = pygame.event.custom_type()
 
     __events: list[pygame.event.Event] = []
+
+    paused: bool = False
 
     def __init__(self) -> None:
         super().__init__()
         self.state = LevelOne()
-        self.paused: bool = False
-
         self.player = Player()
 
         self.player.set_position(
@@ -25,9 +24,9 @@ class Level(ScreenBase):
 
         self.sprites = pygame.sprite.Group(self.player)
 
-        self.pause_menu: PauseMenu = PauseMenu(self.unpause)
-
         pygame.mouse.set_visible(False)
+
+        self.pause_menu = PauseMenu()
 
     def __check_collisions(self):
         """check for collision between sprites"""
@@ -44,14 +43,11 @@ class Level(ScreenBase):
                     self.player.take_damage(laser.damage)
                     if self.player.health <= 0:
                         enemy.cancel_timers()
-                        pygame.time.set_timer(self.GAME_OVER, 1500, True)
+                        self.next_screen = "game_over"
+                        pygame.event.post(pygame.event.Event(self.CHANGESCREEN))
 
     def __update(self):
         """updates and displays game objects"""
-        if self.paused:
-            self.pause_menu.update()
-            return
-
         self.state.update(player_x=self.player.rect.centerx)
         self.__check_collisions()
 
@@ -62,6 +58,7 @@ class Level(ScreenBase):
                 sprite.update_particles()
 
     def __draw(self):
+        self.image.fill((0, 0, 0))
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
 
             for laser in sprite.lasers:
@@ -91,8 +88,6 @@ class Level(ScreenBase):
                 # less than zero remove sprite from all groups
                 if not visible:
                     sprite.kill()
-        if self.paused:
-            self.image.blit(self.pause_menu.image, self.pause_menu.rect)
 
     def __player_keydown_controller(self, event):
         """respond to player inputs"""
@@ -120,35 +115,35 @@ class Level(ScreenBase):
         """Check level events"""
         if self.paused:
             self.pause_menu.check_events(event)
-            return
-        if event.type == pygame.KEYDOWN:
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                if self.paused:
-                    self.unpause()
-                else:
-                    self.state.pause()
-                    self.paused = True
-                    pygame.mouse.set_visible(True)
+                pygame.event.post(pygame.event.Event(self.PAUSE))
             else:
                 self.__player_keydown_controller(event)
 
         elif event.type == pygame.KEYUP:
             self.__player_keyup_controller(event)
 
-        elif event.type == self.GAME_OVER:
-            pygame.mouse.set_cursor(pygame.cursors.arrow)
-            self.change_screen = True
-            self.new_screen = "game_over"
-
         else:
             self.state.check_events(event)
 
-    def unpause(self) -> None:
-        self.state.unpause()
-        self.paused = False
-        pygame.mouse.set_visible(False)
+        if event.type == self.PAUSE:
+            if self.paused:
+                self.state.pause()
+                self.paused = False
+                pygame.mouse.set_visible(False)
+            else:
+                self.state.unpause()
+                self.paused = True
+                pygame.mouse.set_visible(True)
+
 
     def update(self):
         """Update level elements and draw to level's main surface"""
-        self.__update()
-        self.__draw()
+        if self.paused:
+            self.pause_menu.update()
+            self.__draw()
+            self.image.blit(self.pause_menu.image, self.pause_menu.rect)
+        else:
+            self.__update()
+            self.__draw()

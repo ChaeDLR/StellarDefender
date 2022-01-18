@@ -1,6 +1,6 @@
 from pygame import event, time
-from src import Assets
 
+from ..assets import Assets
 from .ship import Ship
 from ..settings import width
 
@@ -25,6 +25,17 @@ class Saucer(Ship):
             int(self.rect.width / 2),
             int(width - (self.rect.width / 2)),
         )
+
+    def attack(self) -> None:
+        """start attack timners"""
+        pass
+
+    def resume(self) -> None:
+        """resume attacks, start timers from capture"""
+        pass
+
+    def capture_attack_timers(self) -> None:
+        pass
 
     def cancel_timers(self):
         """Stop all of the class's timers"""
