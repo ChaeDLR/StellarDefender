@@ -38,11 +38,14 @@ class Level(ScreenBase):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
 
-            if e_lasers := pygame.sprite.spritecollide(self.player, enemy.lasers, True):
+            if e_lasers := pygame.sprite.spritecollide(
+                    self.player,
+                    enemy.lasers,
+                    True
+                ):
                 for laser in e_lasers:
                     self.player.take_damage(laser.damage)
                     if self.player.health <= 0:
-                        enemy.cancel_timers()
                         self.next_screen = "game_over"
                         pygame.event.post(pygame.event.Event(self.CHANGESCREEN))
 
@@ -75,7 +78,6 @@ class Level(ScreenBase):
                 for particle in sprite.color_particles:
                     if particle.alpha > 20.0:
                         visible = True
-                        self.image.lock()
                         for position in particle.positions:
                             pygame.draw.circle(
                                 self.image,
@@ -83,7 +85,6 @@ class Level(ScreenBase):
                                 position,
                                 particle.radius,
                             )
-                        self.image.unlock()
                 # if all of the particles have an alpha
                 # less than zero remove sprite from all groups
                 if not visible:
@@ -115,6 +116,11 @@ class Level(ScreenBase):
         """Check level events"""
         if self.paused:
             self.pause_menu.check_events(event)
+            if event.type == pygame.KEYDOWN:
+                self.__player_keydown_controller(event)
+            elif event.type == pygame.KEYUP:
+                self.__player_keyup_controller(event)
+
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(self.PAUSE))
@@ -129,11 +135,11 @@ class Level(ScreenBase):
 
         if event.type == self.PAUSE:
             if self.paused:
-                self.state.pause()
+                self.state.unpause()
                 self.paused = False
                 pygame.mouse.set_visible(False)
             else:
-                self.state.unpause()
+                self.state.pause()
                 self.paused = True
                 pygame.mouse.set_visible(True)
 

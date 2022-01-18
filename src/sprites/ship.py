@@ -78,7 +78,7 @@ class Ship(sprite.Sprite):
 
     def __animate(self) -> None:
         """
-        animate sprite when hit
+        slow movement and osc alpha when hit
         """
         self.alpha += 50 * self.alpha_switch
 
@@ -88,10 +88,10 @@ class Ship(sprite.Sprite):
             self.alpha += 100 * self.alpha_switch
 
             if self.animation_counter == 6:
-                self.__recover()
+                self._recover()
             self.image.set_alpha(self.alpha)
 
-    def __recover(self) -> None:
+    def _recover(self) -> None:
         """
         reset after being damaged
         """
@@ -123,7 +123,7 @@ class Ship(sprite.Sprite):
         Reduce player health and set bool
         """
         if not self.dying:
-            self.__recover()
+            self._recover()
             self.health -= value
             if self.health <= 0:
                 self.dying = True

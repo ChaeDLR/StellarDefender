@@ -50,9 +50,7 @@ class LevelOne:
         position in the formation
         """
         enemy: Enemy = self.enemies[position]["sprite"]
-        enemy.image.set_alpha(255)
-        enemy.health = 4
-        enemy.dying = False
+        enemy.recover()
         enemy.set_position((settings.width / 2), -50)
         enemy.attack()
         self.group.add(enemy)

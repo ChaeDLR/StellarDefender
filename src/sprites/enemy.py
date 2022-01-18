@@ -37,6 +37,22 @@ class Enemy(Ship):
         if not Enemy.colors:
             Enemy.colors = self._get_sprite_colors(self.image)
 
+    def take_damage(self, value: float) -> None:
+        """override | add attack cancel"""
+        super().take_damage(value)
+        if self.dying:
+            time.set_timer(self.basicatk_event, 0)
+            time.set_timer(self.specialatk_event, 0)
+            event.clear(self.basicatk_event.type)
+            event.clear(self.specialatk_event.type)
+
+    def recover(self) -> None:
+        """override"""
+        self._recover()
+        self.image.set_alpha(self.alpha)
+        self.health = 4
+        self.dying = False
+
     def resume(self) -> None:
         """start attacks from captures"""
         self.basic_attack(True)
@@ -57,9 +73,13 @@ class Enemy(Ship):
 
     def special_attack(self, resume: bool=False) -> None:
         if resume:
-            time.set_timer(self.specialatk_event, self.specialatk_event.capture, 1)
+            time.set_timer(
+            self.specialatk_event, self.specialatk_event.capture, 1
+            )
         else:
-            time.set_timer(self.specialatk_event, self.specialatk_event.speed, 1)
+            time.set_timer(
+            self.specialatk_event, self.specialatk_event.speed, 1
+            )
         self.specialatk_event.capture = time.get_ticks()
 
     def capture_attack_timers(self) -> None:
@@ -73,6 +93,7 @@ class Enemy(Ship):
             self.specialatk_event.capture = self.specialatk_event.speed
 
     def create_laser(self):
+        """override"""
         super().create_laser(1, self.rect.bottom)
         self.basic_attack()
 
@@ -92,7 +113,7 @@ class Enemy(Ship):
 
     def update(self, x: int, y: int):
         """
-        Update enemy sprite
+        override - update enemy sprite
         """
         self.x += self._track(self.rect.centerx, x)
         self.rect.centerx = int(self.x)
