@@ -1,8 +1,9 @@
 from pygame import Surface, sprite, surfarray
-from pygame import event, Vector2
-from typing import Tuple
+from pygame import event, Vector2, time
 
-from ..settings import screen_dims
+from typing import Union
+
+from ..settings import size
 from .laser import Laser
 
 
@@ -11,28 +12,29 @@ class Ship(sprite.Sprite):
     A base class for all of the ship sprites
     """
 
+    base_speed: float = 5.5
+    movement_speed: float = 5.5
+    alpha: int = 255
+    alpha_switch: int = 1
+    animation_counter: int = 1
+
+    moving_left, moving_right = False, False
+    side_switch: bool = True
+    damaged: bool = False
+    dying: bool = False
+
     def __init__(self, img: Surface):
         super().__init__()
-        self.screen_dims = screen_dims
+        self.screen_size = size
 
         self.image: Surface = img
         self.colors: tuple = self._get_sprite_colors(self.image)
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
-        self.moving_left, self.moving_right = False, False
-        self.base_speed: float = 5.5
-        self.movement_speed: float = 5.5
-        self.alpha: int = 255
-        self.alpha_switch: int = 1
+
         self.image.set_alpha(self.alpha)
-        self.animation_counter: int = 1
-        self.side_switch: bool = True
-        self.damaged: bool = False
-        self.dying: bool = False
 
         self.lasers = sprite.Group()
-        # hold the sprites custom events
-        self.__timers: list[event.Event] = []
 
     def _get_sprite_colors(self, img: Surface) -> tuple:
         """
@@ -76,7 +78,7 @@ class Ship(sprite.Sprite):
 
     def __animate(self) -> None:
         """
-        animate sprite when hit
+        slow movement and osc alpha when hit
         """
         self.alpha += 50 * self.alpha_switch
 
@@ -86,10 +88,10 @@ class Ship(sprite.Sprite):
             self.alpha += 100 * self.alpha_switch
 
             if self.animation_counter == 6:
-                self.__recover()
+                self._recover()
             self.image.set_alpha(self.alpha)
 
-    def __recover(self) -> None:
+    def _recover(self) -> None:
         """
         reset after being damaged
         """
@@ -97,21 +99,6 @@ class Ship(sprite.Sprite):
         self.animation_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
-
-    @property
-    def timer_types(self) -> list:
-        return [timer.type for timer in self.__timers]
-
-    @property
-    def timers(self) -> list:
-        return self.__timers
-
-    @timers.setter
-    def timers(self, val: event.Event) -> None:
-        if hasattr(val, "sprite"):
-            self.__timers.append(val)
-        else:
-            raise ValueError
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """
@@ -136,7 +123,7 @@ class Ship(sprite.Sprite):
         Reduce player health and set bool
         """
         if not self.dying:
-            self.__recover()
+            self._recover()
             self.health -= value
             if self.health <= 0:
                 self.dying = True
@@ -187,7 +174,7 @@ class _Particle:
         radius: int,
         velocity: float,
         offset: tuple,
-        center: Tuple[int, int],
+        center: tuple[int, int],
     ):
 
         self.color: list = list(color)

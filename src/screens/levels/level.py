@@ -3,15 +3,18 @@ import pygame
 from .states import LevelOne
 from ...sprites import Player
 from ..screen_base import ScreenBase
+from ..menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
-    GAME_OVER = pygame.event.custom_type()
+
+    __events: list[pygame.event.Event] = []
+
+    paused: bool = False
 
     def __init__(self) -> None:
+        super().__init__()
         self.state = LevelOne()
-        self.paused: bool = False
-
         self.player = Player()
 
         self.player.set_position(
@@ -23,6 +26,8 @@ class Level(ScreenBase):
 
         pygame.mouse.set_visible(False)
 
+        self.pause_menu = PauseMenu()
+
     def __check_collisions(self):
         """check for collision between sprites"""
         for enemy in self.state.group.sprites():
@@ -33,18 +38,21 @@ class Level(ScreenBase):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
 
-            if e_lasers := pygame.sprite.spritecollide(self.player, enemy.lasers, True):
+            if e_lasers := pygame.sprite.spritecollide(
+                    self.player,
+                    enemy.lasers,
+                    True
+                ):
                 for laser in e_lasers:
                     self.player.take_damage(laser.damage)
                     if self.player.health <= 0:
-                        enemy.cancel_timers()
-                        pygame.time.set_timer(self.GAME_OVER, 1500, True)
+                        self.next_screen = "game_over"
+                        pygame.event.post(pygame.event.Event(self.CHANGESCREEN))
 
     def __update(self):
         """updates and displays game objects"""
         self.state.update(player_x=self.player.rect.centerx)
         self.__check_collisions()
-        self.background.update()
 
         for sprite in self.sprites:
             if sprite.health > 0:
@@ -53,8 +61,7 @@ class Level(ScreenBase):
                 sprite.update_particles()
 
     def __draw(self):
-        self.image.blit(self.background.image, self.background.rect)
-
+        self.image.fill((0, 0, 0))
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
 
             for laser in sprite.lasers:
@@ -71,7 +78,6 @@ class Level(ScreenBase):
                 for particle in sprite.color_particles:
                     if particle.alpha > 20.0:
                         visible = True
-                        self.image.lock()
                         for position in particle.positions:
                             pygame.draw.circle(
                                 self.image,
@@ -79,7 +85,6 @@ class Level(ScreenBase):
                                 position,
                                 particle.radius,
                             )
-                        self.image.unlock()
                 # if all of the particles have an alpha
                 # less than zero remove sprite from all groups
                 if not visible:
@@ -109,26 +114,42 @@ class Level(ScreenBase):
 
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
-        if event.type == pygame.KEYDOWN:
+        if self.paused:
+            self.pause_menu.check_events(event)
+            if event.type == pygame.KEYDOWN:
+                self.__player_keydown_controller(event)
+            elif event.type == pygame.KEYUP:
+                self.__player_keyup_controller(event)
+
+        elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                self.paused = False if self.paused else True
-                if self.paused:
-                    return
+                pygame.event.post(pygame.event.Event(self.PAUSE))
             else:
                 self.__player_keydown_controller(event)
 
         elif event.type == pygame.KEYUP:
             self.__player_keyup_controller(event)
 
-        if hasattr(event, "sprite"):
+        else:
             self.state.check_events(event)
 
-        if event.type == self.GAME_OVER:
-            pygame.mouse.set_cursor(pygame.cursors.arrow)
-            self.change_screen = True
-            self.new_screen = "game_over"
+        if event.type == self.PAUSE:
+            if self.paused:
+                self.state.unpause()
+                self.paused = False
+                pygame.mouse.set_visible(False)
+            else:
+                self.state.pause()
+                self.paused = True
+                pygame.mouse.set_visible(True)
+
 
     def update(self):
         """Update level elements and draw to level's main surface"""
-        self.__update()
-        self.__draw()
+        if self.paused:
+            self.pause_menu.update()
+            self.__draw()
+            self.image.blit(self.pause_menu.image, self.pause_menu.rect)
+        else:
+            self.__update()
+            self.__draw()

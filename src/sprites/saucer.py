@@ -1,6 +1,6 @@
 from pygame import event, time
-from game import Assets
 
+from ..assets import Assets
 from .ship import Ship
 from ..settings import width
 
@@ -19,12 +19,28 @@ class Saucer(Ship):
         # "idle" -> "0"
         super().__init__(images["idle"][0])
 
+        self.health: int = 7
         self.movement_speed: float = 3.5
 
         self.xbounds: tuple = (
             int(self.rect.width / 2),
             int(width - (self.rect.width / 2)),
         )
+
+    def recover(self) -> None:
+        """override"""
+        self._recover()
+
+    def attack(self) -> None:
+        """start attack timners"""
+        pass
+
+    def resume(self) -> None:
+        """resume attacks, start timers from capture"""
+        pass
+
+    def capture_attack_timers(self) -> None:
+        pass
 
     def cancel_timers(self):
         """Stop all of the class's timers"""

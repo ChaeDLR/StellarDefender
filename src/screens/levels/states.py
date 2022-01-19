@@ -1,5 +1,5 @@
-from pygame import event, sprite, time
-from game import settings
+from pygame import event, sprite
+from src import settings
 
 from ...sprites import Enemy, Saucer
 
@@ -50,19 +50,26 @@ class LevelOne:
         position in the formation
         """
         enemy: Enemy = self.enemies[position]["sprite"]
-        enemy.image.set_alpha(255)
-        enemy.health = 4
-        enemy.dying = False
+        enemy.recover()
         enemy.set_position((settings.width / 2), -50)
-        enemy.cancel_timers()
-        for timer in enemy.timers:
-            time.set_timer(timer, timer.speed)
+        enemy.attack()
         self.group.add(enemy)
+
+    def pause(self) -> None:
+        """pause the states active timers"""
+        for enemy in self.group:
+            enemy.capture_attack_timers()
+
+    def unpause(self) -> None:
+        for enemy in self.group:
+            if not enemy.dying:
+                enemy.resume()
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
-        if hasattr(event, "callback"):
-            event.callback()
+        # attack events
+        if hasattr(event, "attack"):
+            event.attack()
 
     def update(self, player_x: int):
         """

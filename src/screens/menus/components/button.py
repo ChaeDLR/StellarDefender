@@ -1,15 +1,18 @@
 from pygame import Surface, font, RLEACCEL, SRCALPHA
 
+from typing import Union
+
 
 class Button:
-    button_color: tuple = (255, 255, 175, 255)
-    text_color: tuple = (10, 20, 15, 255)
+    button_color: tuple = (144, 144, 144, 255)
+    text_color: tuple = (255, 255, 255, 255)
 
     def __init__(
         self,
         button_text: str,
         size: tuple = (150, 50),
         font_size: int = 40,
+        pos: tuple[int, int] = (0, 0),
     ):
         """
         surface: Surface -> Menu image,
@@ -20,17 +23,22 @@ class Button:
         """
         self.width, self.height = size
 
-        self.image = Surface(size, SRCALPHA)
+        self.image = Surface(size, flags=SRCALPHA).convert_alpha()
         self.image.fill(self.button_color)
         self.rect = self.image.get_rect()
+        self.name = button_text
 
+        self.set_text(button_text, font_size)
+        self.set_position(pos)
+
+    def set_text(self, text: str, font_size: int):
+        """set the buttons msg_text and msg_text_rect"""
         text_font = font.SysFont(None, font_size, bold=True)
         self.msg_image = text_font.render(
-            button_text, True, self.text_color, self.button_color
+            text, True, self.text_color, self.button_color
         )
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
-        self.image.blit(self.msg_image, self.msg_image_rect)
 
     def check_button(self, mouse_pos, mouse_up: bool = False) -> bool:
         """check for button collision"""
@@ -57,11 +65,13 @@ class Button:
         self.image.set_alpha(255, RLEACCEL)
         self.msg_image.set_alpha(255, RLEACCEL)
 
-    def set_position(self, x_pos=None, y_pos=None):
-        """Set the position of the button"""
-        if x_pos:
-            self.rect.x = x_pos
-        if y_pos:
-            self.rect.y = y_pos
-
+    def set_position(self, x_pos: Union[int, tuple], y_pos: int = None):
+        """Set the position of the rect"""
+        if isinstance(x_pos, tuple):
+            self.rect.center = x_pos
+        else:
+            if x_pos:
+                self.rect.x = x_pos
+            if y_pos:
+                self.rect.y = y_pos
         self.msg_image_rect.center = self.rect.center

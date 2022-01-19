@@ -1,8 +1,8 @@
-from game.sprites.laser import Laser
-from game import Assets
 from pygame import time
 
 from .ship import Ship
+from .laser import Laser
+from ..assets import Assets
 
 
 class Player(Ship):
@@ -36,11 +36,11 @@ class Player(Ship):
     def __move_right(self):
         """move the player to the right"""
         # stops player from moving off the right side of the screen
-        if (self.x + self.image.get_width()) + self.movement_speed > self.screen_dims[
+        if (self.x + self.image.get_width()) + self.movement_speed > self.screen_size[
             0
         ]:
             # aligns player with right side of screen boundary
-            self.x = self.screen_dims[0] - self.image.get_width()
+            self.x = self.screen_size[0] - self.image.get_width()
             self.rect.x = int(self.x)
 
         # else the player moves to the right
