@@ -62,7 +62,8 @@ class LevelOne:
 
     def unpause(self) -> None:
         for enemy in self.group:
-            enemy.resume()
+            if not enemy.dying:
+                enemy.resume()
 
     def check_events(self, event: event.Event):
         """Check state specific events"""
