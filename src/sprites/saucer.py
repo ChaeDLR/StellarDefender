@@ -1,5 +1,6 @@
 from pygame import event, time
 
+from typing import Literal
 from ..assets import Assets
 from .ship import Ship
 from ..settings import width
@@ -10,22 +11,47 @@ class Saucer(Ship):
     colors: tuple = None
     size: tuple = (96, 64)
 
+    self.__animation_index: int = 0
+
     def __init__(self) -> None:
         """Saucer enemy class"""
-        images: dict = Assets.get_image("saucer")
+        self.images: dict = Assets.get_image("saucer")
         # Image keys
         # "charge" -> "0", "1", "2"
-        # "fire" -> "0", "1"
         # "idle" -> "0"
-        super().__init__(images["idle"][0])
+        self.current_animation: Literal["idle", "charge"] = "idle"
+
+        super().__init__(self.images[current_animation][0])
 
         self.health: int = 7
         self.movement_speed: float = 3.5
+
+        # sets the pace of the animation
+        self.animation_counter: int = 0
 
         self.xbounds: tuple = (
             int(self.rect.width / 2),
             int(width - (self.rect.width / 2)),
         )
+
+        self.atk_event = event.Event(
+            event.custom_type(),
+            {
+                "speed": attack_speed,
+                "capture": 0,
+                "attack": self.create_blast
+            }
+        )
+
+        if not Saucer.colors:
+            Saucer.colors = self._get_sprite_colors(self.image)
+
+    @property
+    def animation_index(self) -> int:
+        """return the current animation index if it is within range"""
+        if not self.__animation_index < len(self.images[self.current_animation]):
+            self.__animation_index = 0
+        return self.__animation_index
 
     def recover(self) -> None:
         """override"""
@@ -44,6 +70,10 @@ class Saucer(Ship):
 
     def cancel_timers(self):
         """Stop all of the class's timers"""
+        pass
+
+    def create_blast(self) -> None:
+        """Create saucers blast attack and add it to a sprite group"""
         pass
 
     def update(self, x: int, y: int):

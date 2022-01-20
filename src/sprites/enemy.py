@@ -12,6 +12,7 @@ class Enemy(Ship):
     size: tuple = (64, 64)
 
     def __init__(self, attack_speed: int = 1000) -> None:
+        # TODO: move event code to parent
         super().__init__(Assets.get_image("enemy"))
 
         self.health: int = 4
@@ -19,18 +20,18 @@ class Enemy(Ship):
 
         self.basicatk_event = event.Event(
                     event.custom_type(),
-                        {
-                    "speed": attack_speed,
-                    "capture": 0,
-                    "attack": self.create_laser
+                    {
+                        "speed": attack_speed,
+                        "capture": 0,
+                        "attack": self.create_laser
                     }
                 )
         self.specialatk_event = event.Event(
                     event.custom_type(),
-                        {
-                    "speed": int(attack_speed * 2.25),
-                    "capture": 0,
-                    "attack": self.create_special_laser
+                    {
+                        "speed": int(attack_speed * 2.25),
+                        "capture": 0,
+                        "attack": self.create_special_laser
                     }
                 )
 

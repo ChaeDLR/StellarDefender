@@ -16,7 +16,7 @@ class Ship(sprite.Sprite):
     movement_speed: float = 5.5
     alpha: int = 255
     alpha_switch: int = 1
-    animation_counter: int = 1
+    alpha_counter: int = 1
 
     moving_left, moving_right = False, False
     side_switch: bool = True
@@ -84,10 +84,10 @@ class Ship(sprite.Sprite):
 
         if not 0 <= self.alpha <= 255:
             self.alpha_switch *= -1
-            self.animation_counter += 1
+            self.alpha_counter += 1
             self.alpha += 100 * self.alpha_switch
 
-            if self.animation_counter == 6:
+            if self.alpha_counter == 6:
                 self._recover()
             self.image.set_alpha(self.alpha)
 
@@ -96,7 +96,7 @@ class Ship(sprite.Sprite):
         reset after being damaged
         """
         self.damaged = False
-        self.animation_counter = 1
+        self.alpha_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
 
