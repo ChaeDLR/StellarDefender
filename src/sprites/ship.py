@@ -12,6 +12,7 @@ class Ship(sprite.Sprite):
     A base class for all of the ship sprites
     """
 
+    health: int = 1
     base_speed: float = 5.5
     movement_speed: float = 5.5
     alpha: int = 255
@@ -23,16 +24,19 @@ class Ship(sprite.Sprite):
     damaged: bool = False
     dying: bool = False
 
-    def __init__(self, img: Surface):
+    def __init__(
+            self,
+            image_: Surface,
+            health_: int,
+            events_: list[event.Event]=[]
+        ):
         super().__init__()
         self.screen_size = size
-
-        self.image: Surface = img
-        self.colors: tuple = self._get_sprite_colors(self.image)
+        self.health = health_
+        self.events: list[event.Event] = events_
+        self.image: Surface = image_
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
-
-        self.image.set_alpha(self.alpha)
 
         self.lasers = sprite.Group()
 
@@ -53,7 +57,7 @@ class Ship(sprite.Sprite):
     def _track(self, start: int, dest: int, speed: int = 40) -> float:
         """
         calculate a gradual movement from
-        start ----> dest
+        start ---> dest
         increase speed variable to track slower
         decrease to track faster
         """
@@ -61,7 +65,7 @@ class Ship(sprite.Sprite):
 
     def __generate_particles(self) -> list:
         """
-        Take a list of colors and generate a list of particles
+        Use class's colors var and generate a list of particles
         """
         particles: list = []
         for n, color in enumerate(self.colors):
@@ -95,10 +99,12 @@ class Ship(sprite.Sprite):
         """
         reset after being damaged
         """
+        self.dying = False
         self.damaged = False
         self.alpha_counter = 1
         self.alpha = 255
         self.movement_speed = self.base_speed
+        self.image.set_alpha(self.alpha)
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """
@@ -128,6 +134,9 @@ class Ship(sprite.Sprite):
             if self.health <= 0:
                 self.dying = True
                 self.color_particles = self.__generate_particles()
+                for event_ in self.events:
+                    time.set_timer(event_, 0)
+                    event.clear(event_.type)
             else:
                 self.damaged = True
                 self.movement_speed /= 2

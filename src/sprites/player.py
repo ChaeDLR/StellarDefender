@@ -10,10 +10,9 @@ class Player(Ship):
     colors: tuple = None
 
     def __init__(self) -> None:
-        super().__init__(Assets.get_image("player"))
+        super().__init__(Assets.get_image("player"), 6)
         self.base_speed: float = 10.0
         self.movement_speed: float = 10.0
-        self.health: int = 6
         self.firing: bool = False
         self.__fire_cd: int = 250  # in milliseconds
         self.__prev_ticks: int = time.get_ticks()
@@ -23,27 +22,21 @@ class Player(Ship):
 
     def __move_left(self):
         """move the player to the left"""
-        # checks if player is moving off the screen
         if self.x - self.movement_speed <= 0:
-            # aligns player with left of screen
             self.rect.x = 0
             self.x = float(self.rect.x)
         else:
-            # moves left
             self.x -= self.movement_speed
             self.rect.x = int(self.x)
 
     def __move_right(self):
         """move the player to the right"""
-        # stops player from moving off the right side of the screen
         if (self.x + self.image.get_width()) + self.movement_speed > self.screen_size[
             0
         ]:
-            # aligns player with right side of screen boundary
             self.x = self.screen_size[0] - self.image.get_width()
             self.rect.x = int(self.x)
 
-        # else the player moves to the right
         else:
             self.x += self.movement_speed
             self.rect.x = int(self.x)

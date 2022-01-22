@@ -63,7 +63,6 @@ class Level(ScreenBase):
     def __draw(self):
         self.image.fill((0, 0, 0))
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
-
             for laser in sprite.lasers:
                 if 0 - laser.rect.height < laser.rect.y < self.height:
                     self.image.blit(laser.image, laser.rect)
@@ -115,11 +114,12 @@ class Level(ScreenBase):
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
         if self.paused:
-            self.pause_menu.check_events(event)
             if event.type == pygame.KEYDOWN:
                 self.__player_keydown_controller(event)
             elif event.type == pygame.KEYUP:
                 self.__player_keyup_controller(event)
+            else:
+                self.pause_menu.check_events(event)
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:

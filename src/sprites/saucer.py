@@ -1,6 +1,8 @@
-from pygame import event, time
+import random
 
+from pygame import event, time
 from typing import Literal
+
 from ..assets import Assets
 from .ship import Ship
 from ..settings import width
@@ -11,7 +13,8 @@ class Saucer(Ship):
     colors: tuple = None
     size: tuple = (96, 64)
 
-    self.__animation_index: int = 0
+    __attack_speed: int = 2500
+    __animation_index: int = 0
 
     def __init__(self) -> None:
         """Saucer enemy class"""
@@ -21,9 +24,21 @@ class Saucer(Ship):
         # "idle" -> "0"
         self.current_animation: Literal["idle", "charge"] = "idle"
 
-        super().__init__(self.images[current_animation][0])
+        self.atk_event = event.Event(
+            event.custom_type(),
+            {
+                "speed": self.attack_speed,
+                "capture": 0,
+                "attack": self.create_blast
+            }
+        )
 
-        self.health: int = 7
+        super().__init__(
+                self.images[self.current_animation][0],
+                7,
+                [self.atk_event]
+            )
+
         self.movement_speed: float = 3.5
 
         # sets the pace of the animation
@@ -34,17 +49,10 @@ class Saucer(Ship):
             int(width - (self.rect.width / 2)),
         )
 
-        self.atk_event = event.Event(
-            event.custom_type(),
-            {
-                "speed": attack_speed,
-                "capture": 0,
-                "attack": self.create_blast
-            }
-        )
-
         if not Saucer.colors:
             Saucer.colors = self._get_sprite_colors(self.image)
+
+        random.seed()
 
     @property
     def animation_index(self) -> int:
@@ -52,6 +60,11 @@ class Saucer(Ship):
         if not self.__animation_index < len(self.images[self.current_animation]):
             self.__animation_index = 0
         return self.__animation_index
+
+    @property
+    def attack_speed(self) -> int:
+        """return an random attack speed within a range"""
+        return self.__attack_speed + (self.__attack_speed * random.random())
 
     def recover(self) -> None:
         """override"""

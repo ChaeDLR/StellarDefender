@@ -12,12 +12,7 @@ class Enemy(Ship):
     size: tuple = (64, 64)
 
     def __init__(self, attack_speed: int = 1000) -> None:
-        # TODO: move event code to parent
-        super().__init__(Assets.get_image("enemy"))
-
-        self.health: int = 4
-        self.alpha_inc: int = -50
-
+        """initialize sprite variables, get image, and create events"""
         self.basicatk_event = event.Event(
                     event.custom_type(),
                     {
@@ -35,24 +30,19 @@ class Enemy(Ship):
                     }
                 )
 
+        super().__init__(
+                    Assets.get_image("enemy"),
+                    4,
+                    [self.basicatk_event, self.specialatk_event]
+                )
+
         if not Enemy.colors:
             Enemy.colors = self._get_sprite_colors(self.image)
-
-    def take_damage(self, value: float) -> None:
-        """override | add attack cancel"""
-        super().take_damage(value)
-        if self.dying:
-            time.set_timer(self.basicatk_event, 0)
-            time.set_timer(self.specialatk_event, 0)
-            event.clear(self.basicatk_event.type)
-            event.clear(self.specialatk_event.type)
 
     def recover(self) -> None:
         """override"""
         self._recover()
-        self.image.set_alpha(self.alpha)
         self.health = 4
-        self.dying = False
 
     def resume(self) -> None:
         """start attacks from captures"""
@@ -75,12 +65,12 @@ class Enemy(Ship):
     def special_attack(self, resume: bool=False) -> None:
         if resume:
             time.set_timer(
-            self.specialatk_event, self.specialatk_event.capture, 1
-            )
+                    self.specialatk_event, self.specialatk_event.capture, 1
+                )
         else:
             time.set_timer(
-            self.specialatk_event, self.specialatk_event.speed, 1
-            )
+                    self.specialatk_event, self.specialatk_event.speed, 1
+                )
         self.specialatk_event.capture = time.get_ticks()
 
     def capture_attack_timers(self) -> None:
