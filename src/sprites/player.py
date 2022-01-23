@@ -1,11 +1,12 @@
 from pygame import time
 
-from .ship import Ship
+
+from ..base import ShipBase
 from .laser import Laser
 from ..assets import Assets
 
 
-class Player(Ship):
+class Player(ShipBase):
 
     colors: tuple = None
 

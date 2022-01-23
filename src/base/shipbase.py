@@ -4,10 +4,10 @@ from pygame import event, Vector2, time
 from typing import Union
 
 from ..settings import size
-from .laser import Laser
+from ..sprites import Laser
 
 
-class Ship(sprite.Sprite):
+class ShipBase(sprite.Sprite):
     """
     A base class for all of the ship sprites
     """
@@ -129,7 +129,6 @@ class Ship(sprite.Sprite):
         Reduce player health and set bool
         """
         if not self.dying:
-            self._recover()
             self.health -= value
             if self.health <= 0:
                 self.dying = True

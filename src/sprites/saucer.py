@@ -3,12 +3,12 @@ import random
 from pygame import event, time
 from typing import Literal
 
+from ..base import ShipBase
 from ..assets import Assets
-from .ship import Ship
 from ..settings import width
 
 
-class Saucer(Ship):
+class Saucer(ShipBase):
 
     colors: tuple = None
     size: tuple = (96, 64)
@@ -39,7 +39,8 @@ class Saucer(Ship):
                 [self.atk_event]
             )
 
-        self.movement_speed: float = 3.5
+        self.base_speed: float = 3.5
+        self.movement_speed: float = self.base_speed
 
         # sets the pace of the animation
         self.animation_counter: int = 0

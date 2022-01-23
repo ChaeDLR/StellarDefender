@@ -1,11 +1,9 @@
-from pygame import event
-from pygame.constants import MOUSEBUTTONDOWN
-from pygame.constants import MOUSEBUTTONUP
-
-from .menu_base import MenuBase
-from .components.button import Button
-
 from sys import exit
+
+from pygame import event
+from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
+
+from ...base import MenuBase
 
 
 class PauseMenu(MenuBase):
@@ -28,7 +26,8 @@ class PauseMenu(MenuBase):
                 if button.name == "Resume":
                     event.post(event.Event(self.PAUSE))
                 elif button.name == "Quit":
-                    exit()
+                    self.next_screen = "main_menu"
+                    event.post(event.Event(self.CHANGESCREEN))
         else:
             for button in self.buttons:
                 button.reset_alpha()

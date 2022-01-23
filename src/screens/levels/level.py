@@ -2,7 +2,7 @@ import pygame
 
 from .states import LevelOne
 from ...sprites import Player
-from ..screen_base import ScreenBase
+from ...base import ScreenBase
 from ..menus.pause_menu import PauseMenu
 
 

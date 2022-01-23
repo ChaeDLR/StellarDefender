@@ -1,11 +1,11 @@
 from pygame import event, time
 
+from ..base import ShipBase
 from ..assets import Assets
 from .laser import SLaser
-from .ship import Ship
 
 
-class Enemy(Ship):
+class Enemy(ShipBase):
     """basic enemy class"""
 
     colors: tuple = None
