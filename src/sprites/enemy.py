@@ -41,8 +41,7 @@ class Enemy(ShipBase):
 
     def recover(self) -> None:
         """override"""
-        self._recover()
-        self.health = 4
+        self._recover(4)
 
     def resume(self) -> None:
         """start attacks from captures"""

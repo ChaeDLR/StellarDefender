@@ -95,7 +95,7 @@ class ShipBase(sprite.Sprite):
                 self._recover()
             self.image.set_alpha(self.alpha)
 
-    def _recover(self) -> None:
+    def _recover(self, health_:int=0) -> None:
         """
         reset after being damaged
         """
@@ -103,8 +103,12 @@ class ShipBase(sprite.Sprite):
         self.damaged = False
         self.alpha_counter = 1
         self.alpha = 255
-        self.movement_speed = self.base_speed
+        self.movement_speed = self.base_speed * (
+                self.movement_speed / abs(self.movement_speed)
+            )
         self.image.set_alpha(self.alpha)
+        if health_ > 0:
+            self.health = health_
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """

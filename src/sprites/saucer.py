@@ -13,6 +13,7 @@ class Saucer(ShipBase):
     colors: tuple = None
     size: tuple = (96, 64)
 
+    __base_health: int = 7
     __attack_speed: int = 2500
     __animation_index: int = 0
 
@@ -35,7 +36,7 @@ class Saucer(ShipBase):
 
         super().__init__(
                 self.images[self.current_animation][0],
-                7,
+                self.__base_health,
                 [self.atk_event]
             )
 
@@ -69,7 +70,7 @@ class Saucer(ShipBase):
 
     def recover(self) -> None:
         """override"""
-        self._recover()
+        self._recover(self.__base_health)
 
     def attack(self) -> None:
         """start attack timners"""
@@ -92,7 +93,7 @@ class Saucer(ShipBase):
 
     def update(self, x: int, y: int):
         """update the saucer's position"""
-
+        super().update()
         if not self.xbounds[0] <= self.rect.centerx <= self.xbounds[1]:
             self.movement_speed *= -1
         self.x += self.movement_speed
@@ -101,5 +102,3 @@ class Saucer(ShipBase):
         if y:
             self.y += self._track(self.rect.centery, y)
             self.rect.centery = int(self.y)
-
-        super().update()
