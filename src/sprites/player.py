@@ -1,3 +1,4 @@
+from typing import Literal
 from pygame import time
 
 
@@ -18,8 +19,19 @@ class Player(ShipBase):
         self.__fire_cd: int = 250  # in milliseconds
         self.__prev_ticks: int = time.get_ticks()
 
+        self.__movement = {
+            "right": self.__move_right,
+            "left": self.__move_left,
+            "recoil": self.__recoil,
+        }
+
         if not Player.colors:
             Player.colors = self._get_sprite_colors(self.image)
+
+    def __recoil(self, dir: Literal[1, -1]) -> tuple[float, float]:
+        """React to a force"""
+        # TODO: add player recoil when they try to go off the screen
+        return dir
 
     def __move_left(self):
         """move the player to the left"""
@@ -52,10 +64,12 @@ class Player(ShipBase):
         self.lasers.update()
 
     def update(self, **kwargs):
+        """update player movement and sprites"""
         if self.moving_left:
             self.__move_left()
         elif self.moving_right:
             self.__move_right()
+
         super().update()
 
         if self.firing:

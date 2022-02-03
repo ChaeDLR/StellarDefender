@@ -30,7 +30,7 @@ class Saucer(ShipBase):
             {
                 "speed": self.attack_speed,
                 "capture": 0,
-                "attack": self.create_blast
+                "attack": self.__create_blast
             }
         )
 
@@ -56,6 +56,10 @@ class Saucer(ShipBase):
 
         random.seed()
 
+    def __create_blast(self) -> None:
+        """Create saucers blast attack and add it to a sprite group"""
+        pass
+
     @property
     def animation_index(self) -> int:
         """return the current animation index if it is within range"""
@@ -66,30 +70,33 @@ class Saucer(ShipBase):
     @property
     def attack_speed(self) -> int:
         """return an random attack speed within a range"""
-        return self.__attack_speed + (self.__attack_speed * random.random())
+        return self.__attack_speed + int((self.__attack_speed * random.random()))
 
     def recover(self) -> None:
         """override"""
         self._recover(self.__base_health)
 
-    def attack(self) -> None:
+    def attack(self, resume: bool=False) -> None:
         """start attack timners"""
-        pass
+        if resume:
+            time.set_timer(self.atk_event, self.atk_event.capture, 1)
+        else:
+            time.set_timer(self.atk_event, self.atk_event.speed, 1)
+        self.atk_event.capture = time.get_ticks()
 
     def resume(self) -> None:
         """resume attacks, start timers from capture"""
-        pass
+        self.attack(True)
 
     def capture_attack_timers(self) -> None:
-        pass
+        horas: int = time.get_ticks()
+        self.atk_event.capture = horas - self.atk_event.capture
+        if self.atk_event.capture > self.atk_event.speed:
+            self.atk_event.capture = self.atk_event.speed
 
-    def cancel_timers(self):
-        """Stop all of the class's timers"""
-        pass
-
-    def create_blast(self) -> None:
-        """Create saucers blast attack and add it to a sprite group"""
-        pass
+    # def cancel_timers(self):
+    #     """Stop all of the class's timers"""
+    #     pass
 
     def update(self, x: int, y: int):
         """update the saucer's position"""
