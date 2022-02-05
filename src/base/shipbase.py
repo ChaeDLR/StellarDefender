@@ -19,17 +19,11 @@ class ShipBase(sprite.Sprite):
     alpha_switch: int = 1
     alpha_counter: int = 1
 
-    moving_left, moving_right = False, False
     side_switch: bool = True
     damaged: bool = False
     dying: bool = False
 
-    def __init__(
-            self,
-            image_: Surface,
-            health_: int,
-            events_: list[event.Event]=[]
-        ):
+    def __init__(self, image_: Surface, health_: int, events_: list[event.Event] = []):
         super().__init__()
         self.screen_size = size
         self.health = health_
@@ -63,6 +57,21 @@ class ShipBase(sprite.Sprite):
         """
         return (dest - start) / speed
 
+    def _recover(self, health_: int = 0) -> None:
+        """
+        reset after being damaged
+        """
+        self.dying = False
+        self.damaged = False
+        self.alpha_counter = 1
+        self.alpha = 255
+        self.movement_speed = self.base_speed * (
+            self.movement_speed / abs(self.movement_speed)
+        )
+        self.image.set_alpha(self.alpha)
+        if health_ > 0:
+            self.health = health_
+
     def __generate_particles(self) -> list:
         """
         Use class's colors var and generate a list of particles
@@ -94,21 +103,6 @@ class ShipBase(sprite.Sprite):
             if self.alpha_counter == 6:
                 self._recover()
             self.image.set_alpha(self.alpha)
-
-    def _recover(self, health_:int=0) -> None:
-        """
-        reset after being damaged
-        """
-        self.dying = False
-        self.damaged = False
-        self.alpha_counter = 1
-        self.alpha = 255
-        self.movement_speed = self.base_speed * (
-                self.movement_speed / abs(self.movement_speed)
-            )
-        self.image.set_alpha(self.alpha)
-        if health_ > 0:
-            self.health = health_
 
     def create_laser(self, direction: int, pos_y: int) -> None:
         """
