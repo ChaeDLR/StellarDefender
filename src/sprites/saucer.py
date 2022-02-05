@@ -27,18 +27,12 @@ class Saucer(ShipBase):
 
         self.atk_event = event.Event(
             event.custom_type(),
-            {
-                "speed": self.attack_speed,
-                "capture": 0,
-                "attack": self.__create_blast
-            }
+            {"speed": self.attack_speed, "capture": 0, "attack": self.__create_blast},
         )
 
         super().__init__(
-                self.images[self.current_animation][0],
-                self.__base_health,
-                [self.atk_event]
-            )
+            self.images[self.current_animation][0], self.__base_health, [self.atk_event]
+        )
 
         self.base_speed: float = 3.5
         self.movement_speed: float = self.base_speed
@@ -76,7 +70,7 @@ class Saucer(ShipBase):
         """override"""
         self._recover(self.__base_health)
 
-    def attack(self, resume: bool=False) -> None:
+    def attack(self, resume: bool = False) -> None:
         """start attack timners"""
         if resume:
             time.set_timer(self.atk_event, self.atk_event.capture, 1)

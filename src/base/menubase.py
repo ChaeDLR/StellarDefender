@@ -62,6 +62,7 @@ class MenuBase(ScreenBase):
         self.button_blit_seq = buttons
         return buttons
 
+
 class Button:
     button_color: tuple = (144, 144, 144, 255)
     text_color: tuple = (255, 255, 255, 255)

@@ -8,8 +8,6 @@ from ..menus.pause_menu import PauseMenu
 
 class Level(ScreenBase):
 
-    __events: list[pygame.event.Event] = []
-
     paused: bool = False
 
     def __init__(self) -> None:
@@ -89,23 +87,23 @@ class Level(ScreenBase):
         """respond to player inputs"""
         if event.key == pygame.K_SPACE:
             if self.player.health > 0:
-                self.player.add_flag(self.player.flags.FIRE)
+                self.player.add_flag(self.player.flags.Fire)
 
         elif event.key == pygame.K_a:
-            self.player.add_flag(self.player.flags.MOVELEFT)
+            self.player.add_flag(self.player.flags.MoveLeft)
 
         elif event.key == pygame.K_d:
-            self.player.add_flag(self.player.flags.MOVERIGHT)
+            self.player.add_flag(self.player.flags.MoveRight)
 
     def __player_keyup_controller(self, event):
         if event.key == pygame.K_SPACE:
-            self.player.remove_flag(self.player.flags.FIRE)
+            self.player.remove_flag(self.player.flags.Fire)
 
         elif event.key == pygame.K_a:
-            self.player.remove_flag(self.player.flags.MOVELEFT)
+            self.player.remove_flag(self.player.flags.MoveLeft)
 
         elif event.key == pygame.K_d:
-            self.player.remove_flag(self.player.flags.MOVERIGHT)
+            self.player.remove_flag(self.player.flags.MoveRight)
 
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
