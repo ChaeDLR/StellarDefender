@@ -7,11 +7,10 @@ class StellarDefender:
     def __init__(self):
         pygame.init()
         self.main_screen = pygame.display.set_mode(
-            src.size, flags=pygame.SCALED | pygame.SRCALPHA, vsync=1
+            src.size, flags=pygame.SCALED, vsync=1
         )
-        self.main_screen.set_colorkey((0, 0, 0))
 
-        pygame.event.set_blocked([pygame.MOUSEMOTION])
+        pygame.event.set_blocked([pygame.MOUSEMOTION, pygame.TEXTINPUT])
 
         self.state = src.State()
         self.clock = pygame.time.Clock()
@@ -24,7 +23,7 @@ class StellarDefender:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                    exit(0)
+                    exit()
                 else:
                     self.state.check_events(event)
 

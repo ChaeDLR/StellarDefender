@@ -4,6 +4,7 @@ from .screens import *
 from .assets import Assets
 from .settings import size
 
+
 class State:
 
     background: Background = Background(size)
@@ -14,16 +15,14 @@ class State:
         self.__active_screen = MainMenu()
 
         self.screens: dict = {
-        "main_menu": MainMenu,
-        "level": Level,
-        "game_over": GameOver
+            "main_menu": MainMenu,
+            "level": Level,
+            "game_over": GameOver,
         }
 
     def check_events(self, event) -> None:
         if event.type == self.__active_screen.CHANGESCREEN:
-            self.__active_screen = self.screens[
-                    self.__active_screen.next_screen
-                ]()
+            self.__active_screen = self.screens[self.__active_screen.next_screen]()
         else:
             self.__active_screen.check_events(event)
 

@@ -2,8 +2,7 @@ from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT, KEYDOWN
 from pygame import event, time, mouse
 
 from ...screens import Level
-from .components.button import Button
-from .menu_base import MenuBase
+from ...base import MenuBase
 
 
 class MainMenu(MenuBase):

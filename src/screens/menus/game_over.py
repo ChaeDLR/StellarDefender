@@ -1,7 +1,7 @@
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
 from pygame import event, mouse
-from .menu_base import MenuBase
-from .components.button import Button
+
+from ...base import MenuBase
 
 
 class GameOver(MenuBase):

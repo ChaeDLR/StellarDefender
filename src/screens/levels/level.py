@@ -2,13 +2,11 @@ import pygame
 
 from .states import LevelOne
 from ...sprites import Player
-from ..screen_base import ScreenBase
+from ...base import ScreenBase
 from ..menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
-
-    __events: list[pygame.event.Event] = []
 
     paused: bool = False
 
@@ -38,11 +36,7 @@ class Level(ScreenBase):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
 
-            if e_lasers := pygame.sprite.spritecollide(
-                    self.player,
-                    enemy.lasers,
-                    True
-                ):
+            if e_lasers := pygame.sprite.spritecollide(self.player, enemy.lasers, True):
                 for laser in e_lasers:
                     self.player.take_damage(laser.damage)
                     if self.player.health <= 0:
@@ -63,7 +57,6 @@ class Level(ScreenBase):
     def __draw(self):
         self.image.fill((0, 0, 0))
         for sprite in [*self.sprites.sprites(), *self.state.group.sprites()]:
-
             for laser in sprite.lasers:
                 if 0 - laser.rect.height < laser.rect.y < self.height:
                     self.image.blit(laser.image, laser.rect)
@@ -94,32 +87,33 @@ class Level(ScreenBase):
         """respond to player inputs"""
         if event.key == pygame.K_SPACE:
             if self.player.health > 0:
-                self.player.firing = True
+                self.player.add_flag(self.player.flags.Fire)
 
         elif event.key == pygame.K_a:
-            self.player.moving_left = True
+            self.player.add_flag(self.player.flags.MoveLeft)
 
         elif event.key == pygame.K_d:
-            self.player.moving_right = True
+            self.player.add_flag(self.player.flags.MoveRight)
 
     def __player_keyup_controller(self, event):
         if event.key == pygame.K_SPACE:
-            self.player.firing = False
+            self.player.remove_flag(self.player.flags.Fire)
 
         elif event.key == pygame.K_a:
-            self.player.moving_left = False
+            self.player.remove_flag(self.player.flags.MoveLeft)
 
         elif event.key == pygame.K_d:
-            self.player.moving_right = False
+            self.player.remove_flag(self.player.flags.MoveRight)
 
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
         if self.paused:
-            self.pause_menu.check_events(event)
             if event.type == pygame.KEYDOWN:
                 self.__player_keydown_controller(event)
             elif event.type == pygame.KEYUP:
                 self.__player_keyup_controller(event)
+            else:
+                self.pause_menu.check_events(event)
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
@@ -142,7 +136,6 @@ class Level(ScreenBase):
                 self.state.pause()
                 self.paused = True
                 pygame.mouse.set_visible(True)
-
 
     def update(self):
         """Update level elements and draw to level's main surface"""
