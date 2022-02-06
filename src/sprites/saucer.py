@@ -27,7 +27,7 @@ class Saucer(ShipBase):
 
         self.atk_event = event.Event(
             event.custom_type(),
-            {"speed": self.attack_speed, "capture": 0, "attack": self.__create_blast},
+            {"speed": self.attack_speed, "capture": 0, "attack": self._create_laser},
         )
 
         super().__init__(
@@ -50,9 +50,10 @@ class Saucer(ShipBase):
 
         random.seed()
 
-    def __create_blast(self) -> None:
-        """Create saucers blast attack and add it to a sprite group"""
-        pass
+    def _create_laser(self) -> None:
+        """saucer attack"""
+        super()._create_laser(1, self.rect.centery)
+        self.attack()
 
     @property
     def animation_index(self) -> int:
@@ -83,14 +84,16 @@ class Saucer(ShipBase):
         self.attack(True)
 
     def capture_attack_timers(self) -> None:
-        horas: int = time.get_ticks()
-        self.atk_event.capture = horas - self.atk_event.capture
-        if self.atk_event.capture > self.atk_event.speed:
+        """capture the current progress of the timers"""
+        self.atk_event.capture = self.atk_event.speed - (
+            time.get_ticks() - self.atk_event.capture
+        )
+        if self.atk_event.capture > self.atk_event.speed or self.atk_event.capture <= 1:
             self.atk_event.capture = self.atk_event.speed
 
-    # def cancel_timers(self):
-    #     """Stop all of the class's timers"""
-    #     pass
+    def cancel_timers(self):
+        """Stop all of the class's timers"""
+        pass
 
     def update(self, x: int, y: int):
         """update the saucer's position"""
@@ -103,3 +106,5 @@ class Saucer(ShipBase):
         if y:
             self.y += self._track(self.rect.centery, y)
             self.rect.centery = int(self.y)
+
+        self.lasers.update()

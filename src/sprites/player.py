@@ -80,7 +80,7 @@ class Player(ShipBase):
         self.firing: bool = False
         # flag callables
         self.__run_flag: dict[callable] = {
-            self.flags.Fire.KEY: self.create_laser,
+            self.flags.Fire.KEY: self._create_laser,
             self.flags.MoveRight.KEY: self.__move_right,
             self.flags.MoveLeft.KEY: self.__move_left,
             self.flags.Recoil.KEY: self.__recoil,
@@ -158,9 +158,9 @@ class Player(ShipBase):
             self.x += self.movement_speed
             self.rect.centerx = int(self.x)
 
-    def create_laser(self) -> None:
+    def _create_laser(self) -> None:
         if self.__fire_cd < (time.get_ticks() - self.__prev_ticks):
-            super().create_laser(-1, (self.rect.top - Laser.w_h[1]))
+            super()._create_laser(-1, (self.rect.top - Laser.w_h[1]))
             self.__prev_ticks = time.get_ticks()
 
     def update_particles(self) -> None:
@@ -179,6 +179,6 @@ class Player(ShipBase):
         super().update()
 
         if self.firing:
-            self.create_laser()
+            self._create_laser()
 
         self.lasers.update()

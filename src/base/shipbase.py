@@ -34,6 +34,38 @@ class ShipBase(sprite.Sprite):
 
         self.lasers = sprite.Group()
 
+    def __generate_particles(self) -> list:
+        """
+        Use class's colors var and generate a list of particles
+        """
+        particles: list = []
+        for n, color in enumerate(self.colors):
+            particles.append(
+                _Particle(
+                    color=color,
+                    radius=(self.rect.w / 4) - n,
+                    velocity=0.8 * (n + 1),
+                    offset=(n, n),
+                    center=self.rect.center,
+                )
+            )
+        return particles
+
+    def __animate(self) -> None:
+        """
+        slow movement and osc alpha when hit
+        """
+        self.alpha += 50 * self.alpha_switch
+
+        if not 0 <= self.alpha <= 255:
+            self.alpha_switch *= -1
+            self.alpha_counter += 1
+            self.alpha += 100 * self.alpha_switch
+
+            if self.alpha_counter == 6:
+                self._recover()
+            self.image.set_alpha(self.alpha)
+
     def _get_sprite_colors(self, img: Surface) -> tuple:
         """
         Loop through a surface and grab the colors its made of
@@ -72,39 +104,7 @@ class ShipBase(sprite.Sprite):
         if health_ > 0:
             self.health = health_
 
-    def __generate_particles(self) -> list:
-        """
-        Use class's colors var and generate a list of particles
-        """
-        particles: list = []
-        for n, color in enumerate(self.colors):
-            particles.append(
-                _Particle(
-                    color=color,
-                    radius=(self.rect.w / 4) - n,
-                    velocity=0.8 * (n + 1),
-                    offset=(n, n),
-                    center=self.rect.center,
-                )
-            )
-        return particles
-
-    def __animate(self) -> None:
-        """
-        slow movement and osc alpha when hit
-        """
-        self.alpha += 50 * self.alpha_switch
-
-        if not 0 <= self.alpha <= 255:
-            self.alpha_switch *= -1
-            self.alpha_counter += 1
-            self.alpha += 100 * self.alpha_switch
-
-            if self.alpha_counter == 6:
-                self._recover()
-            self.image.set_alpha(self.alpha)
-
-    def create_laser(self, direction: int, pos_y: int) -> None:
+    def _create_laser(self, direction: int, pos_y: int) -> None:
         """
         create lasers and add it to the group
         """
