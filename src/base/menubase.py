@@ -21,16 +21,7 @@ class MenuBase(ScreenBase):
         self, seq: list[any]
     ) -> Sequence[Tuple[pygame.Surface, pygame.Rect]]:
         """list can contain any class with a image: pygame.Surface and a rect: pygame.Rect"""
-        button_seq: list = []
-        for item in seq:
-            try:
-                button_seq.append((item.image, item.rect))
-                button_seq.append((item.msg_image, item.msg_image_rect))
-            except:
-                print("\nLOOP")
-                print(f"Failed to add Button object to list")
-                print(f"Not a valid button object -> {item}.")
-        return button_seq
+        return [(button.image, button.rect) for button in seq]
 
     @property
     def row(self) -> int:
@@ -48,23 +39,20 @@ class MenuBase(ScreenBase):
 
     def create_buttons(self, names: list[str]) -> list:
         """0 index will be the top button"""
-        buttons: list[Button] = []
-        for i, name in enumerate(names, 1):
-            buttons.append(
-                Button(
-                    name,
-                    pos=(
-                        width / 2,  # x position but rect.centerx
-                        self.__row * (i + 3),  # y position rect.centery
-                    ),
-                )
+        return [
+            Button(
+                name,
+                pos=(
+                    width / 2,  # x position but rect.centerx
+                    self.__row * (i + 3),  # y position rect.centery
+                ),
             )
-        self.button_blit_seq = buttons
-        return buttons
+            for i, name in enumerate(names, 1)
+        ]
 
 
 class Button:
-    button_color: tuple = (144, 144, 144, 255)
+    color: tuple = (144, 144, 144, 255)
     text_color: tuple = (255, 255, 255, 255)
 
     def __init__(
@@ -83,8 +71,8 @@ class Button:
         """
         self.width, self.height = size
 
-        self.image = pygame.Surface(size, flags=pygame.SRCALPHA).convert_alpha()
-        self.image.fill(self.button_color)
+        self.image = pygame.Surface(size).convert_alpha()
+        self.image.fill(self.color)
         self.rect = self.image.get_rect()
         self.name = button_text
 
@@ -94,11 +82,13 @@ class Button:
     def set_text(self, text: str, font_size: int):
         """set the buttons msg_text and msg_text_rect"""
         text_font = pygame.font.SysFont(None, font_size, bold=True)
-        self.msg_image = text_font.render(
-            text, True, self.text_color, self.button_color
+        msg_image = text_font.render(text, True, self.text_color, self.color)
+        offset = (
+            int((self.rect.width - msg_image.get_width()) / 2),
+            int((self.rect.height - msg_image.get_height()) / 2),
         )
-        self.msg_image_rect = self.msg_image.get_rect()
-        self.msg_image_rect.center = self.rect.center
+        self.image.fill(self.color)
+        self.image.blit(msg_image, offset)
 
     def check_button(self, mouse_pos, mouse_up: bool = False) -> bool:
         """check for button collision"""
@@ -114,16 +104,14 @@ class Button:
                 # but a different button was clicked
                 return False
             else:
-                self.image.set_alpha(25, pygame.RLEACCEL)
-                self.msg_image.set_alpha(25, pygame.RLEACCEL)
+                self.image.set_alpha(25)
         # if user releases the mouse button and this button
         # was the one that was pressed
         elif self.image.get_alpha() < 255 and mouse_up:
             self.reset_alpha()
 
     def reset_alpha(self):
-        self.image.set_alpha(255, pygame.RLEACCEL)
-        self.msg_image.set_alpha(255, pygame.RLEACCEL)
+        self.image.set_alpha(255)
 
     def set_position(self, x_pos: Union[int, tuple], y_pos: int = None):
         """Set the position of the rect"""
@@ -134,4 +122,3 @@ class Button:
                 self.rect.x = x_pos
             if y_pos:
                 self.rect.y = y_pos
-        self.msg_image_rect.center = self.rect.center

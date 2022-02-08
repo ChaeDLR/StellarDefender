@@ -9,7 +9,7 @@ class Assets:
     __sprite_images: dict = {}
 
     def __load(cls, path: str, imgs_dict: dict, prev_key: str = None) -> None:
-        """Load (__sprite_images: dict) with all the images in the path arg directory"""
+        """Recursive method that loads cls.__sprite_images with all the images in the path arg directory"""
         if prev_key:
             imgs_dict[prev_key] = {}
         img_size: tuple = (64, 64)

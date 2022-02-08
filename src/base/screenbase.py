@@ -23,7 +23,7 @@ class ScreenBase(metaclass=ABCMeta):
     PAUSE: int = event.custom_type()
 
     def __init__(self) -> None:
-        self.image = Surface(size, flags=SRCALPHA).convert_alpha()
+        self.image = Surface(size).convert_alpha()
         self.image.set_colorkey((0, 0, 0))
         self.rect = self.image.get_rect()
 
