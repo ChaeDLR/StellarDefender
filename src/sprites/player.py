@@ -4,7 +4,7 @@ from math import log
 from dataclasses import dataclass, field, make_dataclass
 
 from ..base import ShipBase
-from ..assets import Assets
+from ..assets import get_image
 from .laser import Laser
 
 
@@ -12,7 +12,6 @@ class Player(ShipBase):
 
     colors: tuple = None
 
-    # movement flags
     flags = make_dataclass(
         "Flags",
         [
@@ -74,7 +73,7 @@ class Player(ShipBase):
     __direction: Literal[1, -1] = 1  # 1 = right, -1 = left. across x-axis
 
     def __init__(self) -> None:
-        super().__init__(Assets.get_image("player"), 6)
+        super().__init__(get_image("player"), 6)
         self.base_speed: float = 10.0
         self.movement_speed: float = 10.0
         self.firing: bool = False

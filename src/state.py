@@ -1,17 +1,19 @@
 import pygame
 
 from .screens import *
-from .assets import Assets
+from .assets import init as asset_init
 from .settings import size
 
 
 class State:
+    """Manages core game loop methods"""
 
     background: Background = Background(size)
     paused: bool = False
 
     def __init__(self):
-        Assets.init()
+        # loads images
+        asset_init()
         self.__active_screen = MainMenu()
 
         self.screens: dict = {
@@ -31,6 +33,5 @@ class State:
         self.__active_screen.update()
 
     def draw(self, display: pygame.Surface) -> None:
-        display.fill((0, 0, 0))
         display.blit(self.background.image, self.background.rect)
         display.blit(self.__active_screen.image, self.__active_screen.rect)

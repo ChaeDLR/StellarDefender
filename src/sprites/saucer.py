@@ -4,8 +4,8 @@ from pygame import event, time
 from typing import Literal
 
 from ..base import ShipBase
-from ..assets import Assets
 from ..settings import width
+from ..assets import get_image
 
 
 class Saucer(ShipBase):
@@ -19,7 +19,7 @@ class Saucer(ShipBase):
 
     def __init__(self) -> None:
         """Saucer enemy class"""
-        self.images: dict = Assets.get_image("saucer")
+        self.images: dict = get_image("saucer")
         # Image keys
         # "charge" -> "0", "1", "2"
         # "idle" -> "0"
