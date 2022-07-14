@@ -3,7 +3,6 @@ from ..settings import size
 from abc import ABCMeta
 from pygame import Surface
 from pygame import event
-from pygame.constants import SRCALPHA
 
 
 class ScreenBase(metaclass=ABCMeta):

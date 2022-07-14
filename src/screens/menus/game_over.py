@@ -2,11 +2,14 @@ from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
 from pygame import event, mouse
 
 from ...base import MenuBase
+from ...assets import keys
 
 
 class GameOver(MenuBase):
     def __init__(self):
-        super().__init__("Game Over", ["Main Menu", "Retry", "Quit"])
+        super().__init__(
+            "Game Over", [keys.buttons.reset, keys.buttons.play, keys.buttons.quit]
+        )
 
         # adjust the main menu buttons font
         self.buttons[0].set_text("Main Menu", 32)
@@ -23,13 +26,13 @@ class GameOver(MenuBase):
         """execute the button's mapped command"""
         for button in self.buttons:
             if button.check_button(mouse_pos, True):
-                if button.name == "Main Menu":
+                if button.key == keys.buttons.reset:
                     self.next_screen = "main_menu"
                     event.post(event.Event(self.CHANGESCREEN))
-                elif button.name == "Retry":
+                elif button.key == keys.buttons.play:
                     self.next_screen = "level"
                     event.post(event.Event(self.CHANGESCREEN))
-                elif button.name == "Quit":
+                elif button.key == keys.buttons.quit:
                     event.clear()
                     event.post(event.Event(QUIT))
 

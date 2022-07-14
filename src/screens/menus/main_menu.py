@@ -1,40 +1,28 @@
-from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT, KEYDOWN
-from pygame import event, time, mouse
+from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
+from pygame import mouse, event
 
-from ...screens import Level
 from ...base import MenuBase
+from ...assets import keys
 
 
 class MainMenu(MenuBase):
-    """
-    Games main menu class
-    """
-
     def __init__(self):
-        super().__init__("Stellar-D", ["start", "quit"])
+        super().__init__("Stellar-D", [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
 
-    def __check_mousedown_events(self, mouse_pos):
-        """check for mousedown events"""
-        for button in self.buttons:
-            button.check_button(mouse_pos)
-
-    def __check_mouseup_events(self, mouse_pos):
-        """check for mouseup events"""
-        for button in self.buttons:
-            if button.check_button(mouse_pos, True):
-                if button.name == "start":
-                    event.post(event.Event(self.CHANGESCREEN))
-                elif button.name == "quit":
-                    event.clear()
-                    event.post(event.Event(QUIT))
-
-    def check_events(self, event):
-        if event.type == MOUSEBUTTONDOWN:
-            self.__check_mousedown_events(event.pos)
-        elif event.type == MOUSEBUTTONUP:
-            self.__check_mouseup_events(event.pos)
+    def check_events(self, _event):
+        if _event.type == MOUSEBUTTONDOWN:
+            for button in self.buttons:
+                button.check_button(_event.pos)
+        elif _event.type == MOUSEBUTTONUP:
+            for button in self.buttons:
+                if button.check_button(_event.pos, True):
+                    if button.key == keys.buttons.play:
+                        event.post(event.Event(self.CHANGESCREEN))
+                    elif button.key == keys.buttons.quit:
+                        event.clear()
+                        event.post(event.Event(QUIT))
 
     def update(self):
         self.image.fill((0, 0, 0))

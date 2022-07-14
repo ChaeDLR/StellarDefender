@@ -1,7 +1,7 @@
 from pygame import event, time
 
 from ..base import ShipBase
-from ..assets import Assets
+from ..assets import get_image
 from .laser import SLaser
 
 
@@ -29,7 +29,7 @@ class Enemy(ShipBase):
         )
 
         super().__init__(
-            Assets.get_image("enemy"),
+            get_image("enemy"),
             self.__base_health,
             [self.basicatk_event, self.specialatk_event],
         )
@@ -57,9 +57,6 @@ class Enemy(ShipBase):
 
     def resume(self) -> None:
         """start attacks from captures"""
-        print("\nCaptures before resume.")
-        print(f"Basic capture = {self.basicatk_event.capture}")
-        print(f"Special capture = {self.specialatk_event.capture}")
         time.set_timer(self.basicatk_event, self.basicatk_event.capture, 1)
         time.set_timer(self.specialatk_event, self.specialatk_event.capture, 1)
 
