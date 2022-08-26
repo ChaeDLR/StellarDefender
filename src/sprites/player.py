@@ -1,5 +1,6 @@
+import pygame
+
 from typing import Literal
-from pygame import time
 from math import log
 from dataclasses import dataclass, field, make_dataclass
 
@@ -68,9 +69,27 @@ class Player(ShipBase):
     )
 
     # active flags separated into lists by priority.
-    __active_flags: dict[list[int]] = {1: [], 2: []}  # priority flags
+    # 1 = top priority, loss of control
+    # 2 = 2nd priority, player controlled
+    __active_flags: dict[list[int]] = {1: [], 2: []}
     __fire_cd: int = 250  # in milliseconds
     __direction: Literal[1, -1] = 1  # 1 = right, -1 = left. across x-axis
+
+    # region properties
+
+    @property
+    def direction(self) -> int:
+        """get the x direction modifier. Only used for Priority 1 flags."""
+        return self.__direction
+
+    @direction.setter
+    def direction(self, dir: Literal[1, -1]) -> None:
+        """Set the direction to left(-1) or right(1)"""
+        if dir not in [1, -1]:
+            raise ValueError
+        self.__direction = dir
+
+    # endregion
 
     def __init__(self) -> None:
         super().__init__(get_image("player"), 6)
@@ -93,31 +112,9 @@ class Player(ShipBase):
             row_wdth,
             int(self.screen_size[0] - row_wdth),
         )
-        self.__prev_ticks: int = time.get_ticks()
+        self.__prev_ticks: int = pygame.time.get_ticks()
 
-    @property
-    def direction(self) -> int:
-        """get the x direction modifier. Only used for Priority 1 flags."""
-        return self.__direction
-
-    @direction.setter
-    def direction(self, dir: Literal[1, -1]) -> None:
-        """Set the direction to left(-1) or right(1)"""
-        if dir not in [1, -1]:
-            raise ValueError
-        self.__direction = dir
-
-    def add_flag(self, flag: dataclass) -> None:
-        """Add a flag to the active flags list"""
-        if (
-            flag in self.flags.__dict__.values()
-            and flag not in self.__active_flags[flag.priority]
-        ):
-            self.__active_flags[flag.priority].append(flag)
-
-    def remove_flag(self, flag: dataclass) -> None:
-        """remove a flag from the active flags list"""
-        self.__active_flags[flag.priority].remove(flag)
+    # region private methods
 
     def __recoil(self) -> None:
         """React to a force"""
@@ -158,9 +155,58 @@ class Player(ShipBase):
             self.rect.centerx = int(self.x)
 
     def _create_laser(self) -> None:
-        if self.__fire_cd < (time.get_ticks() - self.__prev_ticks):
+        if self.__fire_cd < (pygame.time.get_ticks() - self.__prev_ticks):
             super()._create_laser(-1, (self.rect.top - Laser.w_h[1]))
-            self.__prev_ticks = time.get_ticks()
+            self.__prev_ticks = pygame.time.get_ticks()
+
+    # endregion
+
+    # region public methods
+
+    def add_flag(self, flag: dataclass) -> None:
+        """Add a flag to the active flags list"""
+        if (
+            flag in self.flags.__dict__.values()
+            and flag not in self.__active_flags[flag.priority]
+        ):
+            self.__active_flags[flag.priority].append(flag)
+
+    def remove_flag(self, flag: dataclass) -> None:
+        """remove a flag from the active flags list"""
+        try:
+            self.__active_flags[flag.priority].remove(flag)
+        except:
+            # todo: add logging
+            pass
+
+    def keydown_handler(self, event: pygame.event.Event) -> None:
+        """respond to users keyboard inputs"""
+        if event.key == pygame.K_SPACE and self.health > 0:
+            self.add_flag(self.flags.Fire)
+
+        elif event.key == pygame.K_a:
+            self.add_flag(self.flags.MoveLeft)
+
+        elif event.key == pygame.K_d:
+            self.add_flag(self.flags.MoveRight)
+
+    def keyup_handler(self, event: pygame.event.Event) -> None:
+        if event.key == pygame.K_SPACE:
+            self.remove_flag(self.flags.Fire)
+
+        elif event.key == pygame.K_a:
+            self.remove_flag(self.flags.MoveLeft)
+
+        elif event.key == pygame.K_d:
+            self.remove_flag(self.flags.MoveRight)
+
+    def mousedown_handler(self, event: pygame.event.Event) -> None:
+        if event.button == pygame.BUTTON_LEFT and self.health > 0:
+            self.add_flag(self.flags.Fire)
+
+    def mouseup_handler(self, event: pygame.event.Event) -> None:
+        if event.button == pygame.BUTTON_LEFT:
+            self.remove_flag(self.flags.Fire)
 
     def update_particles(self) -> None:
         super().update_particles()
@@ -181,3 +227,5 @@ class Player(ShipBase):
             self._create_laser()
 
         self.lasers.update()
+
+    # endregion

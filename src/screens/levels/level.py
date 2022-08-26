@@ -1,6 +1,6 @@
 import pygame
 
-from .states import LevelOne
+from .level_one import LevelOne
 from ...sprites import Player
 from ...base import ScreenBase
 from ..menus.pause_menu import PauseMenu
@@ -83,46 +83,30 @@ class Level(ScreenBase):
                 if not visible:
                     sprite.kill()
 
-    def __player_keydown_controller(self, event):
-        """respond to player inputs"""
-        if event.key == pygame.K_SPACE:
-            if self.player.health > 0:
-                self.player.add_flag(self.player.flags.Fire)
-
-        elif event.key == pygame.K_a:
-            self.player.add_flag(self.player.flags.MoveLeft)
-
-        elif event.key == pygame.K_d:
-            self.player.add_flag(self.player.flags.MoveRight)
-
-    def __player_keyup_controller(self, event):
-        if event.key == pygame.K_SPACE:
-            self.player.remove_flag(self.player.flags.Fire)
-
-        elif event.key == pygame.K_a:
-            self.player.remove_flag(self.player.flags.MoveLeft)
-
-        elif event.key == pygame.K_d:
-            self.player.remove_flag(self.player.flags.MoveRight)
-
     def check_events(self, event: pygame.event.Event):
         """Check level events"""
         if self.paused:
-            if event.type == pygame.KEYDOWN:
-                self.__player_keydown_controller(event)
-            elif event.type == pygame.KEYUP:
-                self.__player_keyup_controller(event)
-            else:
-                self.pause_menu.check_events(event)
+            if event.type == pygame.KEYUP:
+                self.player.keyup_handler(event)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.player.mouseup_handler(event)
+
+            self.pause_menu.check_events(event)
 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(self.PAUSE))
             else:
-                self.__player_keydown_controller(event)
+                self.player.keydown_handler(event)
 
         elif event.type == pygame.KEYUP:
-            self.__player_keyup_controller(event)
+            self.player.keyup_handler(event)
+
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            self.player.mousedown_handler(event)
+
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.player.mouseup_handler(event)
 
         else:
             self.state.check_events(event)

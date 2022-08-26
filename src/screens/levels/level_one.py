@@ -6,7 +6,7 @@ from ...sprites import Enemy, Saucer
 
 class LevelOne:
     """
-    Basic gameplay state with basic enemies
+    Basic gameplay scene
     """
 
     def __init__(self):
