@@ -117,11 +117,11 @@ class Player(ShipBase):
     # region private methods
 
     def __recoil(self) -> None:
-        """React to a force"""
+        """horizontal bounce"""
         self.x += (
             log(self.movement_speed + (self.movement_speed * self.x), 2)
             * self.direction
-        )
+        ) * 2
 
         if (self.direction > 0 and self.x > self.__recoil_bounds[0]) or (
             self.direction < 0 and self.x < self.__recoil_bounds[1]

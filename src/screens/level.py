@@ -1,9 +1,9 @@
 import pygame
 
-from .level_one import LevelOne
-from ...sprites import Player
-from ...base import ScreenBase
-from ..menus.pause_menu import PauseMenu
+from .levels.one import LevelOne
+from ..sprites import Player
+from ..base import ScreenBase
+from .menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
