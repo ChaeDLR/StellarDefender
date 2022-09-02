@@ -1,7 +1,7 @@
+from math import cos, sin
+
 from pygame import Surface, sprite, surfarray
 from pygame import event, Vector2, time
-
-from typing import Union
 
 from ..settings import size
 from ..sprites import Laser
@@ -44,7 +44,7 @@ class ShipBase(sprite.Sprite):
                 _Particle(
                     color=color,
                     radius=(self.rect.w / 4) - n,
-                    velocity=0.8 * (n + 1),
+                    velocity=1.9 * (n + 1),
                     offset=(n, n),
                     center=self.rect.center,
                 )
@@ -188,6 +188,9 @@ class _Particle:
         self.velocity: float = velocity
         self.offset: tuple = offset
         self.alpha: float = 255.0
+        self.angle: float = 0.0
+
+        self.__angle_velocity: float = 1 / self.radius
 
         self.positions: list = [Vector2((0, 0)) for _ in self.directions]
         for i, position in enumerate(self.positions):
@@ -201,8 +204,13 @@ class _Particle:
         Lower the radius
         """
         for i in range(len(self.positions)):
-            self.positions[i].x += int(self.velocity * self.directions[i][0])
-            self.positions[i].y += int(self.velocity * self.directions[i][1])
+            self.positions[i].x += int(
+                (self.velocity * self.directions[i][0]) * cos(self.angle)
+            )
+
+            self.positions[i].y += int(
+                (self.velocity * self.directions[i][1]) * sin(self.angle)
+            )
 
         if 15.0 < self.alpha <= 255.0:
             self.alpha -= self.velocity
@@ -211,3 +219,4 @@ class _Particle:
 
         self.color[3] = int(self.alpha)
         self.radius -= 0.2
+        self.angle += self.__angle_velocity
