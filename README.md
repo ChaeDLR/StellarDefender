@@ -26,6 +26,12 @@ ___
 ## TODO
 ___
 
+- controller support
+- in game ui
+
+### Projectiles
+- Decrease laser size
+
 ### Saucer
 - Set timers
 - Set spawn cycle

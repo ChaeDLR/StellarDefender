@@ -25,7 +25,7 @@ class _Projectile(sprite.Sprite):
 class Laser(_Projectile):
     """projectile"""
 
-    w_h: tuple = (6, 24)
+    w_h: tuple = (3, 12)
 
     def __init__(self, direct: int) -> None:
         """
@@ -47,7 +47,7 @@ class Laser(_Projectile):
 class SLaser(_Projectile):
     """Special attack laser"""
 
-    w_h: tuple = (12, 12)
+    w_h: tuple = (8, 8)
 
     def __init__(self, direct: int) -> None:
         super().__init__(direct, self.w_h)

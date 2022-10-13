@@ -7,7 +7,7 @@ from ...assets import keys
 
 class MainMenu(MenuBase):
     def __init__(self):
-        super().__init__("Stellar-D", [keys.buttons.play, keys.buttons.quit])
+        super().__init__("Stellar Defender", [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
 

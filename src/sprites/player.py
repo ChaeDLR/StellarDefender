@@ -68,10 +68,6 @@ class Player(ShipBase):
         frozen=True,
     )
 
-    # active flags separated into lists by priority.
-    # 1 = top priority, loss of control
-    # 2 = 2nd priority, player controlled
-    __active_flags: dict[list[int]] = {1: [], 2: []}
     __fire_cd: int = 250  # in milliseconds
     __direction: Literal[1, -1] = 1  # 1 = right, -1 = left. across x-axis
 
@@ -96,6 +92,10 @@ class Player(ShipBase):
         self.base_speed: float = 10.0
         self.movement_speed: float = 10.0
         self.firing: bool = False
+        # active flags separated into lists by priority.
+        # 1 = top priority, loss of control
+        # 2 = 2nd priority, player controlled
+        self.__active_flags: dict[list[int]] = {1: [], 2: []}
         # flag callables
         self.__run_flag: dict[callable] = {
             self.flags.Fire.KEY: self._create_laser,
