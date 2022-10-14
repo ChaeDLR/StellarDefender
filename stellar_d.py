@@ -17,14 +17,17 @@ class StellarDefender:
         pygame.event.set_blocked([pygame.MOUSEMOTION, pygame.TEXTINPUT])
 
         self.state = src.State()
-        self.clock = pygame.time.Clock()
 
         if len(argv) > 1:
             if argv[1] in ["-d", "--debug"]:
-                self.state.DEBUG = True
+                self.state = src.State(True, argv[2])
             else:
                 print("Error: Invalid argument(s)!\nUsage: < \"-d\"(debug mode) >")
                 exit()
+        else:
+            self.state = src.State()
+
+        self.clock = pygame.time.Clock()
 
     def run_game(self):
         """runs the main loop of the game"""

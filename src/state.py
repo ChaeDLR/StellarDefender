@@ -6,23 +6,28 @@ from .settings import size
 
 
 class State:
-    """Manages core game loop methods"""
+    """Manages core gameloop"""
 
     DEBUG: bool = None
 
     background: Background = Background(size)
     paused: bool = False
 
-    def __init__(self):
+    def __init__(self, debug:bool=False, option:str=None):
+        self.DEBUG = debug
         # loads images
         asset_init()
-        self.__active_screen = MainMenu()
 
         self.screens: dict = {
             "main_menu": MainMenu,
             "level": Level,
             "game_over": GameOver,
         }
+
+        if option in self.screens.keys():
+            self.__active_screen = self.screens[option]()
+        else:
+            self.__active_screen = MainMenu()
 
     def check_events(self, event) -> None:
         if event.type == self.__active_screen.CHANGESCREEN:
