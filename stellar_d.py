@@ -1,10 +1,21 @@
 import pygame
 import src
-from sys import exit
+from sys import exit, argv
 
 
 class StellarDefender:
+    """We outsiiiiiddddddeeeeee!
+    """
+
     def __init__(self):
+
+        if len(argv) > 1:
+            if argv[1] in ["-d", "--debug"]:
+                src.DEBUG = True
+        else:
+            print("Error: Invalid argument!\nUsage: <-d>")
+            exit()
+
         pygame.init()
         self.main_screen = pygame.display.set_mode(
             src.size, flags=pygame.SCALED, vsync=1
