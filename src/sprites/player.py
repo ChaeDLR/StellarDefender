@@ -4,7 +4,6 @@ from typing import Literal
 from math import log
 from dataclasses import dataclass, field, make_dataclass
 
-from ..settings import DEBUG
 from ..base import ShipBase
 from ..assets import get_image
 from .laser import Laser
@@ -114,9 +113,6 @@ class Player(ShipBase):
             int(self.screen_size[0] - row_wdth),
         )
         self.__prev_ticks: int = pygame.time.get_ticks()
-
-        if DEBUG:
-            self.health
 
     # region private methods
 

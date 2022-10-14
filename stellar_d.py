@@ -9,13 +9,6 @@ class StellarDefender:
 
     def __init__(self):
 
-        if len(argv) > 1:
-            if argv[1] in ["-d", "--debug"]:
-                src.DEBUG = True
-        else:
-            print("Error: Invalid argument!\nUsage: <-d>")
-            exit()
-
         pygame.init()
         self.main_screen = pygame.display.set_mode(
             src.size, flags=pygame.SCALED, vsync=1
@@ -25,6 +18,13 @@ class StellarDefender:
 
         self.state = src.State()
         self.clock = pygame.time.Clock()
+
+        if len(argv) > 1:
+            if argv[1] in ["-d", "--debug"]:
+                self.state.DEBUG = True
+            else:
+                print("Error: Invalid argument(s)!\nUsage: < \"-d\"(debug mode) >")
+                exit()
 
     def run_game(self):
         """runs the main loop of the game"""

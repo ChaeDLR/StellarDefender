@@ -8,6 +8,8 @@ from .settings import size
 class State:
     """Manages core game loop methods"""
 
+    DEBUG: bool = None
+
     background: Background = Background(size)
     paused: bool = False
 
