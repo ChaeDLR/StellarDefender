@@ -17,7 +17,7 @@ class Level(ScreenBase):
 
         self.player.set_position(
             self.width / 2 - self.player.rect.width / 2,
-            self.height - self.player.rect.height,
+            self.height - (self.player.rect.height * 2),
         )
 
         self.sprites = pygame.sprite.Group(self.player)

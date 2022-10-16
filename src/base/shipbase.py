@@ -31,7 +31,7 @@ class ShipBase(sprite.Sprite):
         self.image: Surface = image_
         self.rect = self.image.get_rect()
         self.x, self.y = float(self.rect.centerx), float(self.rect.centery)
-
+        self.center = self.rect.center
         self.lasers = sprite.Group()
 
     def __generate_particles(self) -> list:
@@ -142,6 +142,7 @@ class ShipBase(sprite.Sprite):
         """set player positions"""
         self.x, self.y = x, y
         self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
+        self.center = self.rect.center
 
     def update_particles(self) -> None:
         for particle in self.color_particles:

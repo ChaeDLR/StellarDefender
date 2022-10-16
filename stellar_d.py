@@ -4,8 +4,7 @@ from sys import exit, argv
 
 
 class StellarDefender:
-    """We outsiiiiiddddddeeeeee!
-    """
+    """We outsiiiiiddddddeeeeee!"""
 
     def __init__(self):
 
@@ -22,7 +21,7 @@ class StellarDefender:
             if argv[1] in ["-d", "--debug"]:
                 self.state = src.State(True, argv[2])
             else:
-                print("Error: Invalid argument(s)!\nUsage: < \"-d\"(debug mode) >")
+                print('Error: Invalid argument(s)!\nUsage: < "-d"(debug mode) >')
                 exit()
         else:
             self.state = src.State()
