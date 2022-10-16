@@ -91,6 +91,8 @@ class Player(ShipBase):
         super().__init__(get_image("player"), 6)
         self.base_speed: float = 10.0
         self.movement_speed: float = 10.0
+        self.osc_speed: int = 1.7
+        self.osc_bounds = (self.rect.y, self.rect.y)
         self.firing: bool = False
         # active flags separated into lists by priority.
         # 1 = top priority, loss of control
@@ -163,6 +165,10 @@ class Player(ShipBase):
 
     # region public methods
 
+    def set_position(self, x: float, y: float) -> None:
+        super().set_position(x, y)
+        self.osc_bounds = (self.rect.y + 14, self.rect.y - 20)
+
     def add_flag(self, flag: dataclass) -> None:
         """Add a flag to the active flags list"""
         if (
@@ -220,6 +226,15 @@ class Player(ShipBase):
 
         for flag in self.__active_flags[priority]:
             self.__run_flag[flag.KEY]()
+
+        # osc player vertically
+        if self.health > 1:
+            if not self.osc_bounds[1] <= self.y <= self.osc_bounds[0]:
+                self.osc_speed *= -1
+                self.y += self.osc_speed
+            self.y += self.osc_speed
+            self.rect.y = self.y
+            
 
         super().update()
 

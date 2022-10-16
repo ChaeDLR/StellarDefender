@@ -13,7 +13,7 @@ class State:
     background: Background = Background(size)
     paused: bool = False
 
-    def __init__(self, debug:bool=False, option:str=None):
+    def __init__(self, debug: bool = False, option: str = None):
         self.DEBUG = debug
         # loads images
         asset_init()
