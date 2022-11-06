@@ -1,15 +1,23 @@
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
-from pygame import mouse, event
+from pygame import mouse, event, mixer
 
 from ...base import MenuBase
 from ...assets import keys
 
 
 class MainMenu(MenuBase):
+
+    music: mixer.Sound = None
+
     def __init__(self):
         super().__init__("Stellar Defender", [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
+        self.music = mixer.Sound(file=f"{self.sound_path}/ufoe.wav")
+        self.music.play()
+    
+    def __del__(self) -> None:
+        self.music.stop()
 
     def check_events(self, _event):
         if _event.type == MOUSEBUTTONDOWN:

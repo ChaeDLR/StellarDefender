@@ -1,3 +1,5 @@
+import os
+
 from ..settings import size
 
 from abc import ABCMeta
@@ -15,6 +17,10 @@ class ScreenBase(metaclass=ABCMeta):
     # next active screen's key | First active screen is main menu
     # screen's key will be the file name of the screen without ".py"
     next_screen: str = "main_menu"
+
+    sound_path: str = os.path.join(
+        os.getcwd(), "assets/sound"
+    )
 
     width, height = size
 
