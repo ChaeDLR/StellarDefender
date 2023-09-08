@@ -26,7 +26,6 @@ def _load(path: str, imgs_dict: dict, prev_key: str = None) -> None:
     try:
         for file in os.listdir(path):
             if file[-4:] == ".png":
-
                 if file[0].isdigit():
                     img: Surface = _load_image(os.path.join(path, file))
                     img: Surface = transform.scale(img, img_size)
@@ -91,7 +90,7 @@ def _get_subimages(image: Surface) -> list[Surface]:
     _rects = _mask.get_bounding_rects()
 
     _images = list()
-    for (surf, rect) in [
+    for surf, rect in [
         (
             Surface(
                 _rect.size,

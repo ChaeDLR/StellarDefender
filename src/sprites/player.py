@@ -10,7 +10,6 @@ from .laser import Laser
 
 
 class Player(ShipBase):
-
     colors: tuple = None
 
     flags = make_dataclass(
@@ -234,7 +233,6 @@ class Player(ShipBase):
                 self.y += self.osc_speed
             self.y += self.osc_speed
             self.rect.y = self.y
-            
 
         super().update()
 

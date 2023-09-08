@@ -7,7 +7,6 @@ from .menus.pause_menu import PauseMenu
 
 
 class Level(ScreenBase):
-
     paused: bool = False
 
     def __init__(self) -> None:

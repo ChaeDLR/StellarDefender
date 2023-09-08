@@ -6,20 +6,15 @@ from ...assets import keys
 
 
 class MainMenu(MenuBase):
-
     music: mixer.Sound = None
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Stellar Defender", [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
         self.music = mixer.Sound(file=f"{self.sound_path}/ufoe.wav")
-        self.music.play()
-    
-    def __del__(self) -> None:
-        self.music.stop()
 
-    def check_events(self, _event):
+    def check_events(self, _event: event.Event) -> None:
         if _event.type == MOUSEBUTTONDOWN:
             for button in self.buttons:
                 button.check_button(_event.pos)

@@ -155,7 +155,6 @@ class ShipBase(sprite.Sprite):
 
 
 class _Particle:
-
     directions: tuple = (
         # left
         (-1, 0),
@@ -183,7 +182,6 @@ class _Particle:
         offset: tuple,
         center: tuple[int, int],
     ):
-
         self.color: list = list(color)
         self.radius: int = radius
         self.velocity: float = velocity

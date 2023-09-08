@@ -9,7 +9,6 @@ from ..settings import width, height
 
 
 class MenuBase(ScreenBase):
-
     _button_positions: list = [(width / 2, (height / 8) * (i + 3)) for i in range(4)]
     _row: int = height / 8
     _button_images: list = list()
@@ -67,7 +66,6 @@ class MenuBase(ScreenBase):
 
 
 class Button:
-
     image: Surface = None
     rect: Rect = None
     name: str = None
@@ -148,7 +146,6 @@ class Button:
 
 
 class ImageButton(Button):
-
     __image: Surface = None
     __key: int = None
 

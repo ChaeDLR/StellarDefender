@@ -4,10 +4,7 @@ from sys import exit, argv
 
 
 class StellarDefender:
-    """We outsiiiiiddddddeeeeee!"""
-
     def __init__(self):
-
         pygame.mixer.pre_init(44100, -16, 2, 2048)
         pygame.init()
 

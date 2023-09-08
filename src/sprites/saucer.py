@@ -9,7 +9,6 @@ from ..assets import get_image
 
 
 class Saucer(ShipBase):
-
     colors: tuple = None
     size: tuple = (96, 64)
 
