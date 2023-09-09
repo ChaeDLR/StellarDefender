@@ -1,7 +1,8 @@
-from math import cos, sin
+from math import cos, sin, atan2, degrees, pi
 
 from pygame import Surface, sprite, surfarray
-from pygame import event, Vector2, time
+from pygame import event, Vector2, time, mask
+from pygame.transform import rotate
 
 from ..settings import size
 from ..sprites import Laser
@@ -104,7 +105,7 @@ class ShipBase(sprite.Sprite):
         if health_ > 0:
             self.health = health_
 
-    def _create_laser(self, direction: int, pos_y: int) -> None:
+    def _create_laser(self, direction: Vector2, pos_y: int, rotate_toward: list | tuple=None) -> None:
         """
         create lasers and add it to the group
         """
@@ -120,7 +121,22 @@ class ShipBase(sprite.Sprite):
             laser.set_position(right_wing_position, pos_y)
             self.side_switch = True
 
+        if rotate_toward:
+            try:
+                dx = rotate_toward[0] - laser.x
+                dy = rotate_toward[1]- laser.y
+            except TypeError as ex:
+                raise ex
+            radians = atan2(-dy, dx)
+            radians %= 2 * pi
+            rotation = degrees(radians) + 90
+
+            laser.image = rotate(laser.image, rotation)
+            laser.rect = laser.image.get_rect(center=laser.rect.center)
+            laser.mask = mask.from_surface(laser.image)
+
         self.lasers.add(laser)
+
 
     def take_damage(self, value) -> None:
         """

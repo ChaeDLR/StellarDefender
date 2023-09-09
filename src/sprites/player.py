@@ -1,7 +1,8 @@
 import pygame
+import math
 
 from typing import Literal
-from math import log
+from math import log, pi
 from dataclasses import dataclass, field, make_dataclass
 
 from ..base import ShipBase
@@ -157,7 +158,18 @@ class Player(ShipBase):
 
     def _create_laser(self) -> None:
         if self.__fire_cd < (pygame.time.get_ticks() - self.__prev_ticks):
-            super()._create_laser(-1, (self.rect.top - Laser.w_h[1]))
+            mpos = pygame.mouse.get_pos()
+            radians = math.atan2(
+                self.y - mpos[1],
+                self.x - mpos[0]
+            )
+            _dir = pygame.Vector2(math.cos(radians) * -1, math.sin(radians) * -1)
+
+            super()._create_laser(
+                _dir,
+                (self.rect.top - Laser.w_h[1]),
+                mpos
+                )
             self.__prev_ticks = pygame.time.get_ticks()
 
     # endregion

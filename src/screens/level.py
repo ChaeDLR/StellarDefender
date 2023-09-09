@@ -21,8 +21,6 @@ class Level(ScreenBase):
 
         self.sprites = pygame.sprite.Group(self.player)
 
-        pygame.mouse.set_visible(False)
-
         self.pause_menu = PauseMenu()
 
     def __check_collisions(self):

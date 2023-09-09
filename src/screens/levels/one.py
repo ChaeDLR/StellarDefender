@@ -1,4 +1,4 @@
-from pygame import event, sprite
+from pygame import event, sprite, mouse
 from src import settings
 
 from ...sprites import Enemy, Saucer

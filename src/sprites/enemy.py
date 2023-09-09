@@ -1,4 +1,4 @@
-from pygame import event, time
+from pygame import event, time, Vector2
 
 from ..base import ShipBase
 from ..assets import get_image
@@ -39,14 +39,14 @@ class Enemy(ShipBase):
 
     def _create_laser(self):
         """override"""
-        super()._create_laser(1, self.rect.bottom)
+        super()._create_laser(Vector2(0,1), self.rect.bottom)
         self.basic_attack()
 
     def _create_special_laser(self):
         """
         Create a special attack laser object and add it to a sprite group
         """
-        s_laser: SLaser = SLaser(1)
+        s_laser: SLaser = SLaser(Vector2(0, 1))
         s_laser.set_position(self.rect.midbottom[0], self.rect.midbottom[1])
         self.lasers.add(s_laser)
         self.special_attack()

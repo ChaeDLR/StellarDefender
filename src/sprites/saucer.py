@@ -1,6 +1,6 @@
 import random
 
-from pygame import event, time
+from pygame import event, time, Vector2
 from typing import Literal
 
 from ..base import ShipBase
@@ -51,7 +51,7 @@ class Saucer(ShipBase):
 
     def _create_laser(self) -> None:
         """saucer attack"""
-        super()._create_laser(1, self.rect.centery)
+        super()._create_laser(Vector2(0, 1), self.rect.centery)
         self.attack()
 
     @property
