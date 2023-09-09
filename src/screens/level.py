@@ -23,6 +23,11 @@ class Level(ScreenBase):
 
         self.pause_menu = PauseMenu()
 
+        pygame.mouse.set_cursor(pygame.cursors.broken_x)
+
+    def __del__(self) -> None:
+        pygame.mouse.set_cursor(pygame.cursors.arrow)
+
     def __check_collisions(self):
         """check for collision between sprites"""
         for enemy in self.state.group.sprites():
@@ -112,11 +117,11 @@ class Level(ScreenBase):
             if self.paused:
                 self.state.unpause()
                 self.paused = False
-                pygame.mouse.set_visible(False)
+                pygame.mouse.set_cursor(pygame.cursors.broken_x)
             else:
                 self.state.pause()
                 self.paused = True
-                pygame.mouse.set_visible(True)
+                pygame.mouse.set_cursor(pygame.cursors.arrow)
 
     def update(self):
         """Update level elements and draw to level's main surface"""
