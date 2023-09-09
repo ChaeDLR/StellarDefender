@@ -105,7 +105,9 @@ class ShipBase(sprite.Sprite):
         if health_ > 0:
             self.health = health_
 
-    def _create_laser(self, direction: Vector2, pos_y: int, rotate_toward: list | tuple=None) -> None:
+    def _create_laser(
+        self, direction: Vector2, pos_y: int, rotate_toward: list | tuple = None
+    ) -> None:
         """
         create lasers and add it to the group
         """
@@ -124,7 +126,7 @@ class ShipBase(sprite.Sprite):
         if rotate_toward:
             try:
                 dx = rotate_toward[0] - laser.x
-                dy = rotate_toward[1]- laser.y
+                dy = rotate_toward[1] - laser.y
             except TypeError as ex:
                 raise ex
             radians = atan2(-dy, dx)
@@ -136,7 +138,6 @@ class ShipBase(sprite.Sprite):
             laser.mask = mask.from_surface(laser.image)
 
         self.lasers.add(laser)
-
 
     def take_damage(self, value) -> None:
         """

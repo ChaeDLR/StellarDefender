@@ -13,7 +13,7 @@ class _Projectile(sprite.Sprite):
         if not isinstance(direction, Vector2):
             raise TypeError
 
-        super().__init__()        
+        super().__init__()
         self.direction: Vector2 = direction
 
         if size:
