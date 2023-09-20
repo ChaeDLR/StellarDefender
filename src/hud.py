@@ -1,29 +1,22 @@
 from pygame import font, Surface, Rect, SRCALPHA
 
-from surface_components import ProgressBar
+from .surface_components import ProgressBar, TextSurface
 
 
 class Hud:
     health_bar: ProgressBar = None
-    score: Surface = None
+    score: TextSurface = None
 
-    def __init__(self) -> None:
-        self.health_bar = ProgressBar()
-        self.score = Surface((240, 40), flags=SRCALPHA)
+    __score: int = 0
+    __viewport_dims: tuple[int, int] = None
 
-    def create_text(
-        self,
-        x_y: tuple,
-        text: str,
-        textsize: int = 56,
-        boldtext: bool = True,
-    ) -> tuple[Surface, Rect]:
-        """
-        x_y: tuple -> positions using center of the rect
-        Tuple -> (text_img, text_rect)
-        """
-        text_font = font.SysFont(None, textsize, bold=boldtext)
-        text_img = text_font.render(text, True, self.text_color)
-        text_rect = text_img.get_rect()
-        text_rect.center = x_y
-        return (text_img, text_rect)
+    def __init__(self, dims: tuple[int, int]) -> None:
+        self.__viewport_dims = dims
+        self.health_bar = ProgressBar((200, 30), (210, 20, 40, 255))
+        self.score = TextSurface((240, 40), 56)
+
+        self.health_bar.rect.center = dims[0] // 3, dims[1] - self.health_bar.rect.h
+        self.score.rect.center = (dims[0] // 3) * 2, self.health_bar.rect.y
+
+    def update_score(self, change: int) -> None:
+        ...

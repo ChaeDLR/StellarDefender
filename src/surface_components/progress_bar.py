@@ -1,4 +1,4 @@
-from pygame import Surface, SRCALPHA, Rect, Vector2
+from pygame import Surface, SRCALPHA, Rect
 
 
 class ProgressBar:
@@ -12,7 +12,6 @@ class ProgressBar:
 
     def __init__(
         self,
-        coords: tuple | list = None,
         size: tuple | list = None,
         color: tuple | list = None,
     ) -> None:
@@ -24,7 +23,6 @@ class ProgressBar:
         self.base_color: tuple = (10, 10, 10, 200)
 
         self.rect = self.image.get_rect()
-        self.rect.x, self.rect.y = coords
 
     def update(self, percentage: float):
         """

@@ -2,6 +2,7 @@ import pygame
 
 from .levels.one import LevelOne
 from ..sprites import Player
+from ..hud import Hud
 from ..base import ScreenBase
 from .menus.pause_menu import PauseMenu
 
@@ -13,6 +14,7 @@ class Level(ScreenBase):
         super().__init__()
         self.state = LevelOne()
         self.player = Player()
+        self.hud = Hud((self.width, self.height))
 
         self.player.set_position(
             self.width / 2 - self.player.rect.width / 2,
