@@ -21,6 +21,7 @@ class ShipBase(sprite.Sprite):
     alpha: int = 255
     alpha_switch: int = 1
     alpha_counter: int = 1
+    points_value: float = 5.0
 
     side_switch: bool = True
     damaged: bool = False

@@ -30,7 +30,7 @@ class Level(ScreenBase):
         pygame.mouse.set_cursor(pygame.cursors.broken_x)
 
     def __get_txt(self) -> str:
-        return f"Score: {int(self.score)}"
+        return f"{int(self.score)}"
 
     def __init_hud(self) -> None:
         """initialize players heads up display"""
@@ -40,6 +40,7 @@ class Level(ScreenBase):
         )
         score = TextSurface((self.width - 260, 25), 56, self.__get_txt)
         self.hud.attach(health_bar, score)
+        self.hud.update()
 
     def __check_collisions(self):
         """check for collision between sprites"""
