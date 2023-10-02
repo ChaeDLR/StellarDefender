@@ -5,30 +5,41 @@ from ..sprites import Player
 from ..hud import Hud
 from ..base import ScreenBase
 from .menus.pause_menu import PauseMenu
+from ..surface_components import ProgressBar, TextSurface
 
 
 class Level(ScreenBase):
+    score: float = 0.0
     paused: bool = False
 
     def __init__(self) -> None:
         super().__init__()
         self.state = LevelOne()
         self.player = Player()
-        self.hud = Hud((self.width, self.height))
 
         self.player.set_position(
             self.width / 2 - self.player.rect.width / 2,
             self.height - (self.player.rect.height * 2),
         )
 
-        self.sprites = pygame.sprite.Group(self.player)
+        self.__init_hud()
 
+        self.sprites = pygame.sprite.Group(self.player)
         self.pause_menu = PauseMenu()
 
         pygame.mouse.set_cursor(pygame.cursors.broken_x)
 
-    def __del__(self) -> None:
-        pygame.mouse.set_cursor(pygame.cursors.arrow)
+    def __get_txt(self) -> str:
+        return f"Score: {int(self.score)}"
+
+    def __init_hud(self) -> None:
+        """initialize players heads up display"""
+        self.hud = Hud((self.width, self.height))
+        health_bar = ProgressBar(
+            (20, 25), (200, 30), (210, 20, 40, 255), self.player.get_healthp
+        )
+        score = TextSurface((self.width - 260, 25), 56, self.__get_txt)
+        self.hud.attach(health_bar, score)
 
     def __check_collisions(self):
         """check for collision between sprites"""
@@ -39,6 +50,9 @@ class Level(ScreenBase):
                 ):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
+                        if enemy.dying:
+                            self.score += enemy.points_value
+                            self.hud.update()
 
             if e_lasers := pygame.sprite.spritecollide(self.player, enemy.lasers, True):
                 for laser in e_lasers:
@@ -46,6 +60,7 @@ class Level(ScreenBase):
                     if self.player.health <= 0:
                         self.next_screen = "game_over"
                         pygame.event.post(pygame.event.Event(self.CHANGESCREEN))
+                    self.hud.update()
 
     def __update(self):
         """updates and displays game objects"""
@@ -86,6 +101,7 @@ class Level(ScreenBase):
                 # less than zero remove sprite from all groups
                 if not visible:
                     sprite.kill()
+        self.image.blits(self.hud.get_blitseq())
 
     def check_events(self, event: pygame.event.Event):
         """Check level events"""

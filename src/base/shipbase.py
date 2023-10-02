@@ -13,6 +13,8 @@ class ShipBase(sprite.Sprite):
     A base class for all of the ship sprites
     """
 
+    MAXHEALTH: int = 1
+
     health: int = 1
     base_speed: float = 5.5
     movement_speed: float = 5.5
@@ -27,6 +29,7 @@ class ShipBase(sprite.Sprite):
     def __init__(self, image_: Surface, health_: int, events_: list[event.Event] = []):
         super().__init__()
         self.screen_size = size
+        self.MAXHEALTH = health_
         self.health = health_
         self.events: list[event.Event] = events_
         self.image: Surface = image_
@@ -160,6 +163,9 @@ class ShipBase(sprite.Sprite):
         self.x, self.y = x, y
         self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
         self.center = self.rect.center
+
+    def get_healthp(self) -> float:
+        return float(self.health / self.MAXHEALTH)
 
     def update_particles(self) -> None:
         for particle in self.color_particles:

@@ -1,5 +1,3 @@
-from sys import exit
-
 from pygame import event
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP
 
