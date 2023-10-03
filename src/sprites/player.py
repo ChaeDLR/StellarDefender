@@ -88,7 +88,7 @@ class Player(ShipBase):
     # endregion
 
     def __init__(self) -> None:
-        super().__init__(get_image("player"), 6)
+        super().__init__(image=get_image("player"), health=10)
         self.base_speed: float = 10.0
         self.movement_speed: float = 10.0
         self.osc_speed: int = 1.7

@@ -35,6 +35,7 @@ class Saucer(ShipBase):
 
         self.base_speed: float = 3.5
         self.movement_speed: float = self.base_speed
+        self.points_value: float = 8.5
 
         # sets the pace of the animation
         self.animation_counter: int = 0
