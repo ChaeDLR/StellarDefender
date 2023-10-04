@@ -36,7 +36,7 @@ class Level(ScreenBase):
         """initialize players heads up display"""
         self.hud = Hud((self.width, self.height))
         health_bar = ProgressBar(
-            (20, 25), (200, 30), (210, 20, 40, 255), self.player.get_healthp
+            (20, 25), (200, 40), (210, 20, 40, 255), self.player.get_healthp
         )
         score = TextSurface((self.width - 260, 25), 56, self.__get_txt)
         self.hud.attach(health_bar, score)
@@ -61,7 +61,8 @@ class Level(ScreenBase):
                     if self.player.health <= 0:
                         self.next_screen = "game_over"
                         pygame.event.post(pygame.event.Event(self.CHANGESCREEN))
-                    self.hud.update()
+                        return
+                self.hud.update()
 
     def __update(self):
         """updates and displays game objects"""

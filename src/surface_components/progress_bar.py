@@ -71,7 +71,7 @@ class ProgressBar:
         """
         self.__percentage = self.__get_percentage_cb()
         _img = Surface(
-            ((self.size[0] * self.__percentage) - 20, self.rect.height - 10)
+            ((self.size[0] * self.__percentage), self.rect.height - 10)
         ).convert()
         _img.fill(self.color)
 
@@ -80,6 +80,6 @@ class ProgressBar:
             _img,
             (
                 self.rect.x,
-                self.rect.y - 5,
+                self.rect.y,
             ),
         )
