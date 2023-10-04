@@ -9,7 +9,7 @@ class MainMenu(MenuBase):
     music: mixer.Sound = None
 
     def __init__(self) -> None:
-        super().__init__("Stellar Defender", [keys.buttons.play, keys.buttons.quit])
+        super().__init__("", [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
         self.music = mixer.Sound(file=f"{self.sound_path}/ufoe.wav")

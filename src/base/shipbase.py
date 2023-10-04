@@ -13,12 +13,15 @@ class ShipBase(sprite.Sprite):
     A base class for all of the ship sprites
     """
 
+    MAXHEALTH: int = 1
+
     health: int = 1
     base_speed: float = 5.5
     movement_speed: float = 5.5
     alpha: int = 255
     alpha_switch: int = 1
     alpha_counter: int = 1
+    points_value: float = 5.0
 
     side_switch: bool = True
     damaged: bool = False
@@ -27,6 +30,7 @@ class ShipBase(sprite.Sprite):
     def __init__(self, image_: Surface, health_: int, events_: list[event.Event] = []):
         super().__init__()
         self.screen_size = size
+        self.MAXHEALTH = health_
         self.health = health_
         self.events: list[event.Event] = events_
         self.image: Surface = image_
@@ -105,7 +109,9 @@ class ShipBase(sprite.Sprite):
         if health_ > 0:
             self.health = health_
 
-    def _create_laser(self, direction: Vector2, pos_y: int, rotate_toward: list | tuple=None) -> None:
+    def _create_laser(
+        self, direction: Vector2, pos_y: int, rotate_toward: list | tuple = None
+    ) -> None:
         """
         create lasers and add it to the group
         """
@@ -124,7 +130,7 @@ class ShipBase(sprite.Sprite):
         if rotate_toward:
             try:
                 dx = rotate_toward[0] - laser.x
-                dy = rotate_toward[1]- laser.y
+                dy = rotate_toward[1] - laser.y
             except TypeError as ex:
                 raise ex
             radians = atan2(-dy, dx)
@@ -136,7 +142,6 @@ class ShipBase(sprite.Sprite):
             laser.mask = mask.from_surface(laser.image)
 
         self.lasers.add(laser)
-
 
     def take_damage(self, value) -> None:
         """
@@ -159,6 +164,9 @@ class ShipBase(sprite.Sprite):
         self.x, self.y = x, y
         self.rect.centerx, self.rect.centery = int(self.x), int(self.y)
         self.center = self.rect.center
+
+    def get_healthp(self) -> float:
+        return float(self.health / self.MAXHEALTH)
 
     def update_particles(self) -> None:
         for particle in self.color_particles:

@@ -39,7 +39,7 @@ class Enemy(ShipBase):
 
     def _create_laser(self):
         """override"""
-        super()._create_laser(Vector2(0,1), self.rect.bottom)
+        super()._create_laser(Vector2(0, 1), self.rect.bottom)
         self.basic_attack()
 
     def _create_special_laser(self):

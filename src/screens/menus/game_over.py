@@ -1,5 +1,5 @@
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
-from pygame import event, mouse
+from pygame import event, mouse, cursors
 
 from ...base import MenuBase
 from ...assets import keys
@@ -15,7 +15,7 @@ class GameOver(MenuBase):
         self.buttons[0].set_text("Main Menu", 32)
         self.button_blit_seq = self._get_blitseq(self.buttons)
 
-        mouse.set_visible(True)
+        mouse.set_cursor(cursors.arrow)
 
     def __check_mousedown_events(self, mouse_pos):
         """let the button know it's been pressed"""
