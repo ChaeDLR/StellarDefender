@@ -4,6 +4,7 @@ import math
 from typing import Literal
 from math import log
 from dataclasses import dataclass, field, make_dataclass
+from pizmos import particles
 
 from ..base import ShipBase
 from ..assets import get_image
@@ -172,6 +173,14 @@ class Player(ShipBase):
     def set_position(self, x: float, y: float) -> None:
         super().set_position(x, y)
         self.osc_bounds = (self.rect.y + 14, self.rect.y - 20)
+
+    def get_laser_explosion(
+        self, position: pygame.Vector2 | tuple | list
+    ) -> particles.ParticleGroup:
+        return particles.effects.explosion(
+            position,
+            Laser.get_explosion_colors(),
+        )
 
     def add_flag(self, flag: dataclass) -> None:
         """Add a flag to the active flags list"""

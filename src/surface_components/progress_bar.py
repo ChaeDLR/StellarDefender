@@ -70,16 +70,18 @@ class ProgressBar:
         to the nearest whole number
         """
         self.__percentage = self.__get_percentage_cb()
-        _img = Surface(
-            ((self.size[0] * self.__percentage), self.rect.height - 10)
-        ).convert()
-        _img.fill(self.color)
-
         self.image.fill(self.base_color)
-        self.image.blit(
-            _img,
-            (
-                self.rect.x,
-                self.rect.y,
-            ),
-        )
+
+        if self.__percentage > 0.0:
+            _img = Surface(
+                ((self.size[0] * self.__percentage), self.rect.height - 10)
+            ).convert()
+            _img.fill(self.color)
+
+            self.image.blit(
+                _img,
+                (
+                    self.rect.x,
+                    self.rect.y,
+                ),
+            )

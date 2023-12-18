@@ -4,6 +4,8 @@ from pygame import Surface, sprite, surfarray
 from pygame import event, Vector2, time, mask
 from pygame.transform import rotate
 
+from numpy import uint8
+
 from ..settings import size
 from ..sprites import Laser
 
@@ -78,7 +80,7 @@ class ShipBase(sprite.Sprite):
         """
         colors: list = []
         for row in surfarray.array3d(img):
-            for pixel in row:
+            for pixel in row:  # pixels: uint8
                 rgb: list = [int(pixel[0]), int(pixel[1]), int(pixel[2]), 255]
                 if rgb not in [[255, 255, 255, 255], [0, 0, 0, 255]] + colors:
                     colors.append(rgb)

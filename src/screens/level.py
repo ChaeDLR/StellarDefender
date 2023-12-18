@@ -1,5 +1,7 @@
 import pygame
 
+from pizmos.particles import Particle, ParticleGroup
+
 from .levels.one import LevelOne
 from ..sprites import Player
 from ..hud import Hud
@@ -11,6 +13,8 @@ from ..surface_components import ProgressBar, TextSurface
 class Level(ScreenBase):
     score: float = 0.0
     paused: bool = False
+
+    __particles: list[ParticleGroup] = []
 
     def __init__(self) -> None:
         super().__init__()
@@ -51,6 +55,9 @@ class Level(ScreenBase):
                 ):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
+                        self.__particles.append(self.player.get_laser_explosion(
+                                laser.get_position()
+                            ))
                         if enemy.dying:
                             self.score += enemy.points_value
                             self.hud.update()
@@ -74,6 +81,9 @@ class Level(ScreenBase):
                 sprite.update(play_x=self.player.rect.centerx)
             elif sprite.dying:
                 sprite.update_particles()
+        
+        for _particle_group in self.__particles:
+            _particle_group.update() # pass kwargs as needed
 
     def __draw(self):
         self.image.fill((0, 0, 0))
@@ -103,6 +113,10 @@ class Level(ScreenBase):
                 # less than zero remove sprite from all groups
                 if not visible:
                     sprite.kill()
+        # draw particle groups
+        for _pg in self.__particles:
+            _pg.draw(self.image)
+
         self.image.blits(self.hud.get_blitseq())
 
     def check_events(self, event: pygame.event.Event):
