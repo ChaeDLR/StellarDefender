@@ -55,8 +55,10 @@ class Level(ScreenBase):
                 ):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
+                        # laser hit particle effects population
                         self.__particles.append(self.player.get_laser_explosion(
-                                laser.get_position()
+                                laser.get_position(),
+                                enemy.get_colors()
                             ))
                         if enemy.dying:
                             self.score += enemy.points_value

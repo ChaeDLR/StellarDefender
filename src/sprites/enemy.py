@@ -51,6 +51,9 @@ class Enemy(ShipBase):
         self.lasers.add(s_laser)
         self.special_attack()
 
+    def get_colors(self) -> tuple:
+        return tuple(self.colors)
+
     def recover(self) -> None:
         """override"""
         self._recover(self.__base_health)

@@ -55,6 +55,9 @@ class Saucer(ShipBase):
         super()._create_laser(Vector2(0, 1), self.rect.centery)
         self.attack()
 
+    def get_colors(self) -> tuple:
+        return tuple(self.colors)
+
     @property
     def animation_index(self) -> int:
         """return the current animation index if it is within range"""

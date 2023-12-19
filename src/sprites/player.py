@@ -175,11 +175,12 @@ class Player(ShipBase):
         self.osc_bounds = (self.rect.y + 14, self.rect.y - 20)
 
     def get_laser_explosion(
-        self, position: pygame.Vector2 | tuple | list
+        self, position: pygame.Vector2 | tuple | list, colors: list | tuple=[(0,0,0)]
     ) -> particles.ParticleGroup:
         return particles.effects.explosion(
             position,
-            Laser.get_explosion_colors(),
+            colors,
+            6
         )
 
     def add_flag(self, flag: dataclass) -> None:

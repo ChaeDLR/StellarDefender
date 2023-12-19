@@ -43,6 +43,7 @@ class Laser(_Projectile):
     """projectile"""
 
     w_h: tuple = (3, 12)
+    __explosion_colors = ((255, 5, 5), (245, 10, 10), (0, 0, 0), (15, 15, 15))
 
     def __init__(self, direction: Vector2) -> None:
         """
@@ -51,8 +52,11 @@ class Laser(_Projectile):
         super().__init__(direction, self.w_h)
         self.damage: int = 1
         self.__color = (255, 100, 100)
-        self.__explosion_colors = ((210, 90, 90), (10, 10, 10), (106, 104, 109))
         self.image.fill(self.__color)
+
+    @classmethod
+    def get_explosion_colors(self) -> tuple:
+        return self.__explosion_colors
 
     def update(self):
         """
