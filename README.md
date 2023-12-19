@@ -1,4 +1,4 @@
-# Stellar Defender
+# |_| | _  | _
  Pygame space shooter
 
 ## Demo
