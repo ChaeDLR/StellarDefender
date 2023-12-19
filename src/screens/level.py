@@ -1,13 +1,13 @@
 import pygame
 
 from pizmos.particles import Particle, ParticleGroup
+from pizmos.canvas import ProgressBar, TextSurface
 
 from .levels.one import LevelOne
 from ..sprites import Player
 from ..hud import Hud
 from ..base import ScreenBase
 from .menus.pause_menu import PauseMenu
-from ..surface_components import ProgressBar, TextSurface
 
 
 class Level(ScreenBase):
@@ -40,9 +40,9 @@ class Level(ScreenBase):
         """initialize players heads up display"""
         self.hud = Hud((self.width, self.height))
         health_bar = ProgressBar(
-            (20, 25), (200, 40), (210, 20, 40, 255), self.player.get_healthp
+            (20, 30), (200, 12), (210, 20, 40, 255), self.player.get_healthp
         )
-        score = TextSurface((self.width - 260, 25), 56, self.__get_txt)
+        score = TextSurface((self.width - 140, 25), 56, self.__get_txt)
         self.hud.attach(health_bar, score)
         self.hud.update()
 
@@ -56,10 +56,11 @@ class Level(ScreenBase):
                     for laser in p_lasers:
                         enemy.take_damage(laser.damage)
                         # laser hit particle effects population
-                        self.__particles.append(self.player.get_laser_explosion(
-                                laser.get_position(),
-                                enemy.get_colors()
-                            ))
+                        self.__particles.append(
+                            self.player.get_laser_explosion(
+                                laser.get_position(), enemy.get_colors()
+                            )
+                        )
                         if enemy.dying:
                             self.score += enemy.points_value
                             self.hud.update()
@@ -83,9 +84,9 @@ class Level(ScreenBase):
                 sprite.update(play_x=self.player.rect.centerx)
             elif sprite.dying:
                 sprite.update_particles()
-        
+
         for _particle_group in self.__particles:
-            _particle_group.update() # pass kwargs as needed
+            _particle_group.update()  # pass kwargs as needed
 
     def __draw(self):
         self.image.fill((0, 0, 0))

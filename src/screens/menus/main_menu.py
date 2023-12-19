@@ -7,7 +7,7 @@ from ...assets import keys
 
 class MainMenu(MenuBase):
     music: mixer.Sound = None
-    title: str = ""
+    title: str = "|_| |_ |_"
 
     def __init__(self) -> None:
         super().__init__(self.title, [keys.buttons.play, keys.buttons.quit])

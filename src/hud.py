@@ -1,6 +1,5 @@
 from pygame import Rect, Surface
 
-
 class Hud:
     rect: Rect = None
 
