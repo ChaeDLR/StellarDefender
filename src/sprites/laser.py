@@ -5,6 +5,9 @@ from math import pi, sin, radians
 class _Projectile(sprite.Sprite):
     """Projectile base class"""
 
+    __color: tuple = (0, 0, 0)
+    __explosion_colors: tuple = ((0, 0, 0), (255, 255, 255))
+
     def __init__(self, direction: Vector2, size: tuple = None):
         """
         dir(direction): int -> 1 (moving down), -1 (moving up)
@@ -20,25 +23,40 @@ class _Projectile(sprite.Sprite):
             self.image: Surface = Surface(size)
             self.rect = self.image.get_rect()
 
+    def get_color(self) -> tuple:
+        return self.__color
+
+    @classmethod
+    def get_explosion_colors(self) -> tuple:
+        return self.__explosion_colors
+
     def set_position(self, x: int, y: int):
         """set laser position using topleft"""
         self.rect.x, self.rect.y = x, y
         self.x, self.y = float(self.rect.x), float(self.rect.y)
+
+    def get_position(self) -> tuple:
+        return self.rect.center
 
 
 class Laser(_Projectile):
     """projectile"""
 
     w_h: tuple = (3, 12)
+    __explosion_colors = ((255, 5, 5), (245, 10, 10), (0, 0, 0), (15, 15, 15))
 
     def __init__(self, direction: Vector2) -> None:
         """
         img: Surface -> laser.png
         """
         super().__init__(direction, self.w_h)
-        self.image.fill((255, 100, 100))
-
         self.damage: int = 1
+        self.__color = (255, 100, 100)
+        self.image.fill(self.__color)
+
+    @classmethod
+    def get_explosion_colors(self) -> tuple:
+        return self.__explosion_colors
 
     def update(self):
         """
@@ -58,7 +76,8 @@ class SLaser(_Projectile):
 
     def __init__(self, direct: int) -> None:
         super().__init__(direct, self.w_h)
-        self.image.fill((150, 150, 230))
+        self.__color = (150, 150, 230)
+        self.image.fill(self.__color)
         self.image.convert_alpha()
 
         self.alpha: int = 255

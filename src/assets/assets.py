@@ -4,7 +4,7 @@ from pygame import Surface, image, transform, mask, mixer
 from pygame.constants import BLEND_ALPHA_SDL2
 
 
-_images_directory: str = os.path.abspath(os.path.join(os.getcwd(), "assets/images"))
+_images_directory: str = os.path.abspath(os.path.join(os.getcwd(), "assets/images/"))
 # this dict gets populated once the method get_sprite_images gets run once
 _sprite_images: dict = {}
 

@@ -7,9 +7,10 @@ from ...assets import keys
 
 class MainMenu(MenuBase):
     music: mixer.Sound = None
+    title: str = ""
 
     def __init__(self) -> None:
-        super().__init__("", [keys.buttons.play, keys.buttons.quit])
+        super().__init__(self.title, [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
         self.music = mixer.Sound(file=f"{self.sound_path}/ufoe.wav")
