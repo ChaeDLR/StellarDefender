@@ -4,7 +4,7 @@ import src
 from sys import exit, argv
 
 
-class StellarDefender:
+class Ull:
     def __init__(self):
         pygame.mixer.pre_init(44100, -16, 2, 2048)
         pygame.init()
@@ -49,5 +49,5 @@ class StellarDefender:
 
 
 if __name__ == "__main__":
-    stellar_defender = StellarDefender()
-    stellar_defender.run_game()
+    _ULL = Ull()
+    _ULL.run_game()

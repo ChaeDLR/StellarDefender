@@ -1,5 +1,8 @@
+from os.path import abspath
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, QUIT
 from pygame import mouse, event, mixer
+from src import settings
+
 
 from ...base import MenuBase
 from ...assets import keys
@@ -13,7 +16,12 @@ class MainMenu(MenuBase):
         super().__init__(self.title, [keys.buttons.play, keys.buttons.quit])
         self.next_screen: str = "level"
         mouse.set_visible(True)
-        self.music = mixer.Sound(file=f"{self.sound_path}/ufoe.wav")
+        self.music = mixer.Sound(file=abspath(f"{self.sound_path}/{settings.main_menu_theme}"))
+        self.music.set_volume(0.1)
+        self.music.play(-1)
+
+    def __del__(self) -> None:
+        self.music.stop()
 
     def check_events(self, _event: event.Event) -> None:
         if _event.type == MOUSEBUTTONDOWN:

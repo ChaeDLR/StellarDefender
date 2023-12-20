@@ -1,6 +1,6 @@
 import os
 
-from ..settings import size
+from ..settings import size, assets_path
 
 from abc import ABCMeta
 from pygame import Surface
@@ -18,7 +18,7 @@ class ScreenBase(metaclass=ABCMeta):
     # screen's key will be the file name of the screen without ".py"
     next_screen: str = "main_menu"
 
-    sound_path: str = os.path.join(os.getcwd(), "assets/sound")
+    sound_path: str = os.path.join(f"{assets_path}/sound/")
 
     width, height = size
 
